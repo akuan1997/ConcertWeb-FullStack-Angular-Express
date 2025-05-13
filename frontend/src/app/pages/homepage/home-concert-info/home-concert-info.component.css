@@ -1,0 +1,29 @@
+/* src/app/pages/homepage/home-concert-info/home-concert-info.component.css */
+.card-title {
+  font-weight: bold;
+}
+
+.card ul li {
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.card ul li strong {
+  display: inline-block;
+  min-width: 120px; /* 調整標籤寬度以對齊 */
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card .mt-auto { /* 確保按鈕區域總在底部 */
+  margin-top: auto;
+}
+
+/* 如果你使用了 Bootstrap Icons */
+.bi {
+  margin-right: 0.3em;
+  vertical-align: text-bottom; /* 讓圖示和文字對齊好一點 */
+}

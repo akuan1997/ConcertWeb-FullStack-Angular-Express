@@ -1,45 +1,63 @@
-<div class="concert-info-container">
-  <h2>演唱會資訊 (來自 /api/more-data)</h2>
+<div class="concert-info-container container mt-4">
+  <h2>最新演唱會資訊</h2>
+<!--  <p class="text-muted mb-4">(從 /api/more-data 獲取，目前顯示前 6 筆)</p>-->
 
-  <!-- 載入中提示 -->
-  <div *ngIf="isLoading" class="loading-indicator">
-    <p>載入中，請稍候...</p>
-    <!-- 你可以在這裡放一個 spinner 圖示 -->
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
+  <div *ngIf="isLoading" class="text-center my-5">
+    <!-- ... loading spinner ... -->
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage" class="alert alert-danger" role="alert">
+    <!-- ... error message ... -->
+  </div>
+
+  <!-- ****** 修改此處的 *ngIf ****** -->
+  <div *ngIf="!isLoading && !errorMessage && concertsResponse && concertsResponse.data && concertsResponse.data.length > 0">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div *ngFor="let concert of concertsResponse.data" class="col">
+        <div class="card h-100 shadow-sm">
+          <!-- 卡片內容 (這裡的 concert 確定存在) -->
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ concert.tit }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ concert.cit !== ' -' ? concert.cit : '未提供城市' }}</h6>
+
+            <ul class="list-unstyled mt-3 mb-4 flex-grow-1">
+              <li><strong><i class="bi bi-calendar-event"></i> 活動日期:</strong> {{ formatArrayDisplay(concert.pdt, '、') }}</li>
+              <li><strong><i class="bi bi-ticket-perforated"></i> 售票時間:</strong> {{ formatArrayDisplay(concert.sdt, '、') }}</li>
+              <li><strong><i class="bi bi-geo-alt"></i> 地點:</strong> {{ formatArrayDisplay(concert.loc, '、') }}</li>
+              <li><strong><i class="bi bi-cash-coin"></i> 票價:</strong> {{ formatPriceDisplay(concert.prc) }}</li>
+              <li><strong><i class="bi bi-clock"></i> API時間:</strong> {{ formatDate(concert.tim, 'yyyy/MM/dd') }}</li>
+            </ul>
+
+            <div class="mt-auto text-center">
+              <a *ngIf="concert.url" [href]="concert.url" target="_blank" class="btn btn-primary btn-sm me-2">
+                <i class="bi bi-link-45deg"></i> 活動/售票連結
+              </a>
+<!--              <a *ngIf="concert.web" [href]="concert.web" target="_blank" class="btn btn-outline-secondary btn-sm">-->
+<!--                <i class="bi bi-globe"></i> 官方網站-->
+<!--              </a>-->
+              <p *ngIf="!concert.url && !concert.web" class="text-muted small mt-2">無相關連結</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 確保 concertsResponse 存在才訪問其屬性 -->
+<!--    <div class="mt-3 text-center" *ngIf="concertsResponse">-->
+<!--      <small>當前頁: {{ concertsResponse.page }} / 總頁數: {{ concertsResponse.totalPages }} (本頁顯示: {{ concertsResponse.nbHits }} 筆)</small>-->
+<!--    </div>-->
+  </div>
+
+  <!-- ****** 修改此處的 *ngIf ****** -->
+  <div *ngIf="!isLoading && !errorMessage && concertsResponse && concertsResponse.data && concertsResponse.data.length === 0">
+    <div class="alert alert-info" role="alert">
+      目前沒有演唱會資訊可顯示 (API 回傳空資料陣列)。
     </div>
   </div>
 
-  <!-- 錯誤訊息提示 -->
-  <div *ngIf="!isLoading && errorMessage" class="error-message alert alert-danger">
-    <p>{{ errorMessage }}</p>
-  </div>
-
-  <!-- 成功獲取資料並顯示 -->
-  <div *ngIf="!isLoading && !errorMessage && concertsData">
-    <h3>API 回應內容:</h3>
-    <pre>{{ concertsData | json }}</pre>
-
-    <!-- 如果想更進一步，可以嘗試迭代顯示 concertsData.data 中的項目 -->
-    <div *ngIf="concertsData.data && concertsData.data.length > 0">
-      <h4>資料列表 (前 {{ concertsData.data.length }} 筆):</h4>
-      <ul>
-        <li *ngFor="let item of concertsData.data; let i = index">
-          <!-- 假設你的 item 有 'tit' (標題) 欄位 -->
-          {{ i + 1 }}. {{ item.tit || '無標題' }}
-          <!-- 你可以顯示更多欄位，例如 item.cit, item.tim 等 -->
-          <span *ngIf="item.cit"> ({{ item.cit }})</span>
-        </li>
-      </ul>
-      <p>當前頁: {{ concertsData.page }} / 總頁數: {{ concertsData.totalPages }} (本頁筆數: {{ concertsData.nbHits }})</p>
+  <!-- ****** 新增一個 case，當 concertsResponse 還是 null 且不是 loading 或 error 時 ****** -->
+  <div *ngIf="!isLoading && !errorMessage && !concertsResponse">
+    <div class="alert alert-secondary" role="alert">
+      資料尚未從伺服器回傳，或 API 回應格式不符預期。
     </div>
-    <div *ngIf="concertsData.data && concertsData.data.length === 0">
-      <p>目前沒有資料可顯示。</p>
-    </div>
-  </div>
-
-  <!-- 如果沒有資料且沒有錯誤，可能是 API 尚未呼叫或其他情況 -->
-  <div *ngIf="!isLoading && !errorMessage && !concertsData">
-    <p>尚未載入資料。</p>
   </div>
 </div>
