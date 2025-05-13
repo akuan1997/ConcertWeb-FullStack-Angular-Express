@@ -6,6 +6,7 @@ import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-all-concert-info-page',
+  standalone: true,
   imports: [
     AboutComponent,
     AllConcertInfoComponent,
