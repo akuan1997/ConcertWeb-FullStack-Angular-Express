@@ -1,0 +1,37 @@
+.social-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.email-link {
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: #28a745 !important;
+  }
+}
+
+.email-links-container {
+  .email-link {
+    display: block;  /* 讓每個 a 標籤佔滿一行，自動換行 */
+    margin-bottom: 0.5rem; /* 調整這個值來改變郵件連結之間的垂直間距，例如 8px */
+    transition: color 0.2s ease-in-out; /* 添加顏色變化的過渡效果 */
+
+    /* 移除最後一個郵件連結的下邊距，使其底部更整齊 */
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Hover 效果 */
+    &:hover {
+      color: #28a745 !important; /* 使用 !important 是為了確保覆蓋 Bootstrap 的 .text-body 類別 */
+      /* 如果不使用 text-decoration-none，也可以在這裡加上 text-decoration: underline; */
+    }
+  }
+}
