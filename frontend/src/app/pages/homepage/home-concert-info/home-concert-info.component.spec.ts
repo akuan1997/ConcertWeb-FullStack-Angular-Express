@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AllLatestInfoComponent } from './all-latest-info.component';
+import { HomeConcertInfoComponent } from './home-concert-info.component';
 
-describe('AllLatestInfoComponent', () => {
-  let component: AllLatestInfoComponent;
-  let fixture: ComponentFixture<AllLatestInfoComponent>;
+describe('HomeConcertInfoComponent', () => {
+  let component: HomeConcertInfoComponent;
+  let fixture: ComponentFixture<HomeConcertInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AllLatestInfoComponent]
+      imports: [HomeConcertInfoComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AllLatestInfoComponent);
+    fixture = TestBed.createComponent(HomeConcertInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

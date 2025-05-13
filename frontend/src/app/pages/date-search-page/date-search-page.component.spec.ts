@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HomeLatestInfoComponent } from './home-latest-info.component';
+import { DateSearchPageComponent } from './date-search-page.component';
 
-describe('HomeLatestInfoComponent', () => {
-  let component: HomeLatestInfoComponent;
-  let fixture: ComponentFixture<HomeLatestInfoComponent>;
+describe('DateSearchPageComponent', () => {
+  let component: DateSearchPageComponent;
+  let fixture: ComponentFixture<DateSearchPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomeLatestInfoComponent]
+      imports: [DateSearchPageComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HomeLatestInfoComponent);
+    fixture = TestBed.createComponent(DateSearchPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
