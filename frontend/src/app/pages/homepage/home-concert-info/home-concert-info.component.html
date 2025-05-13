@@ -1,1 +1,45 @@
-<p>home-concert-info works!</p>
+<div class="concert-info-container">
+  <h2>演唱會資訊 (來自 /api/more-data)</h2>
+
+  <!-- 載入中提示 -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>載入中，請稍候...</p>
+    <!-- 你可以在這裡放一個 spinner 圖示 -->
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- 錯誤訊息提示 -->
+  <div *ngIf="!isLoading && errorMessage" class="error-message alert alert-danger">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- 成功獲取資料並顯示 -->
+  <div *ngIf="!isLoading && !errorMessage && concertsData">
+    <h3>API 回應內容:</h3>
+    <pre>{{ concertsData | json }}</pre>
+
+    <!-- 如果想更進一步，可以嘗試迭代顯示 concertsData.data 中的項目 -->
+    <div *ngIf="concertsData.data && concertsData.data.length > 0">
+      <h4>資料列表 (前 {{ concertsData.data.length }} 筆):</h4>
+      <ul>
+        <li *ngFor="let item of concertsData.data; let i = index">
+          <!-- 假設你的 item 有 'tit' (標題) 欄位 -->
+          {{ i + 1 }}. {{ item.tit || '無標題' }}
+          <!-- 你可以顯示更多欄位，例如 item.cit, item.tim 等 -->
+          <span *ngIf="item.cit"> ({{ item.cit }})</span>
+        </li>
+      </ul>
+      <p>當前頁: {{ concertsData.page }} / 總頁數: {{ concertsData.totalPages }} (本頁筆數: {{ concertsData.nbHits }})</p>
+    </div>
+    <div *ngIf="concertsData.data && concertsData.data.length === 0">
+      <p>目前沒有資料可顯示。</p>
+    </div>
+  </div>
+
+  <!-- 如果沒有資料且沒有錯誤，可能是 API 尚未呼叫或其他情況 -->
+  <div *ngIf="!isLoading && !errorMessage && !concertsData">
+    <p>尚未載入資料。</p>
+  </div>
+</div>
