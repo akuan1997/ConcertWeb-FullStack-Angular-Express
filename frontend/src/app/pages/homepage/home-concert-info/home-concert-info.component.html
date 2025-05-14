@@ -19,10 +19,11 @@
         <div class="card h-100 shadow-sm">
           <!-- 卡片內容 (這裡的 concert 確定存在) -->
           <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ concert.tit }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ concert.cit !== ' -' ? concert.cit : '未提供城市' }}</h6>
-
-            <ul class="list-unstyled mt-3 mb-4 flex-grow-1">
+            <div class="text-center">
+              <h5 class="card-title">{{ concert.tit }}</h5>
+              <h6 class="card-subtitle my-3 text-muted fw-bold">{{ concert.cit !== ' -' ? concert.cit : '未提供城市' }}</h6>
+            </div>
+            <ul class="list-unstyled flex-grow-1">
               <li>
                 <strong><i class="bi bi-calendar-event"></i> 活動日期:</strong>
                 <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.pdt, '、') }}</span>
