@@ -11,9 +11,9 @@
   </div>
 
   <!-- ****** 修改此處的 *ngIf ****** -->
-  <div *ngIf="!isLoading && !errorMessage && concertsResponse && concertsResponse.data && concertsResponse.data.length > 0">
+  <div *ngIf="!isLoading && !errorMessage && processedConcertsResponse && processedConcertsResponse.data && processedConcertsResponse.data.length > 0">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      <div *ngFor="let concert of concertsResponse.data" class="col">
+      <div *ngFor="let concert of processedConcertsResponse.data" class="col">
         <div class="card h-100 shadow-sm">
           <!-- 卡片內容 (這裡的 concert 確定存在) -->
           <div class="card-body d-flex flex-column">
@@ -48,14 +48,14 @@
   </div>
 
   <!-- ****** 修改此處的 *ngIf ****** -->
-  <div *ngIf="!isLoading && !errorMessage && concertsResponse && concertsResponse.data && concertsResponse.data.length === 0">
+  <div *ngIf="!isLoading && !errorMessage && processedConcertsResponse && processedConcertsResponse.data && processedConcertsResponse.data.length === 0">
     <div class="alert alert-info" role="alert">
       目前沒有演唱會資訊可顯示 (API 回傳空資料陣列)。
     </div>
   </div>
 
   <!-- ****** 新增一個 case，當 concertsResponse 還是 null 且不是 loading 或 error 時 ****** -->
-  <div *ngIf="!isLoading && !errorMessage && !concertsResponse">
+  <div *ngIf="!isLoading && !errorMessage && !processedConcertsResponse">
     <div class="alert alert-secondary" role="alert">
       資料尚未從伺服器回傳，或 API 回應格式不符預期。
     </div>
