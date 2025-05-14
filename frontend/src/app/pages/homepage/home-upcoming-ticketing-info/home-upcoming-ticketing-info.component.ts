@@ -113,21 +113,42 @@ export class HomeUpcomingTicketingInfoComponent implements OnInit {
   }
 
   private parseDateString(dateStr: string): Date | null {
-    // 預期格式為 "YYYY/MM/DD HH:mm" 或 "YYYY/MM/DD"
     try {
-      const [datePart] = dateStr.split(' '); // 取 "YYYY/MM/DD" 部分
-      const [year, month, day] = datePart.split('/').map(Number);
+      const parts = dateStr.split(' '); // 例: "2025/05/14 12:00" -> ["2025/05/14", "12:00"] 或 "2025/05/14" -> ["2025/05/14"]
+      const dateParts = parts[0].split('/').map(Number); // 例: [2025, 5, 14]
 
-      if (isNaN(year) || isNaN(month) || isNaN(day) || month < 1 || month > 12 || day < 1 || day > 31) {
-        // console.warn(`日期字串元件無效: ${dateStr}`);
+      if (dateParts.length !== 3 || dateParts.some(isNaN) || dateParts[1] < 1 || dateParts[1] > 12 || dateParts[2] < 1 || dateParts[2] > 31) {
+        console.warn(`日期字串日期部分無效: ${parts[0]} (來自 ${dateStr})`);
         return null;
       }
+
+      let hours = 0;
+      let minutes = 0;
+
+      if (parts.length === 2) { // 表示有時間部分，例如 "12:00"
+        const timeParts = parts[1].split(':').map(Number); // 例: [12, 0]
+        if (timeParts.length === 2 && !timeParts.some(isNaN) &&
+          timeParts[0] >= 0 && timeParts[0] <= 23 &&
+          timeParts[1] >= 0 && timeParts[1] <= 59) {
+          hours = timeParts[0];
+          minutes = timeParts[1];
+        } else {
+          console.warn(`日期字串時間部分無效: ${parts[1]} (來自 ${dateStr})`);
+          // 如果時間部分無效，可以選擇預設為00:00或返回null，這裡選擇預設
+        }
+      }
+
       // JavaScript Date 建構函式中的月份是從 0 開始的
-      const parsedDate = new Date(year, month - 1, day);
-      parsedDate.setHours(0,0,0,0); // 標準化為當天開始時間以便比較
+      const parsedDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], hours, minutes);
+
+      // 再次檢查創建的日期是否有效
+      if (isNaN(parsedDate.getTime())) {
+        console.warn(`創建的日期無效: ${dateStr} -> ${dateParts[0]}-${dateParts[1]-1}-${dateParts[2]} ${hours}:${minutes}`);
+        return null;
+      }
       return parsedDate;
     } catch (e) {
-      // console.warn(`解析日期字串時發生錯誤: ${dateStr}`, e);
+      console.warn(`解析日期字串時發生例外: ${dateStr}`, e);
       return null;
     }
   }
