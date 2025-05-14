@@ -1,1 +1,59 @@
-<p>home-upcoming-ticketing-info works!</p>
+<div class="upcoming-ticketing-container container mt-4">
+  <h3><i class="bi bi-calendar-check"></i> 近期售票 (7日內)</h3>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">載入中...</span>
+    </div>
+    <p>正在載入近期售票資訊...</p>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i> {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && upcomingTicketingConcerts.length > 0">
+    <div class="list-group">
+      <!-- 迭代顯示符合條件的演唱會 -->
+      <a *ngFor="let concert of upcomingTicketingConcerts"
+         [href]="concert.url || '#'"
+         target="_blank"
+         class="list-group-item list-group-item-action flex-column align-items-start mb-2 shadow-sm concert-ticket-item">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ concert.tit }}</h5>
+          <!-- 顯示落在7天內的、最早的那個售票日期，並格式化 -->
+          <small class="text-muted">
+            <i class="bi bi-alarm"></i>
+            售票: {{ formatDate(getEarliestValidSdtDate(concert.sdt, todayForDisplay(), sevenDaysLaterForDisplay()), 'MM/dd HH:mm') || formatArrayDisplay(concert.sdt, ' / ') }}
+          </small>
+        </div>
+        <p class="mb-1">
+          <i class="bi bi-geo-alt-fill"></i> {{ concert.cit !== ' -' ? concert.cit : '多城市' }}
+          <!-- 如果地點存在且不是預設的 '-'，則顯示 -->
+          <span *ngIf="concert.loc && concert.loc.length > 0 && concert.loc[0] !== ' -'">
+                 - {{ formatArrayDisplay(concert.loc, '、') }}
+            </span>
+        </p>
+        <small class="text-success">
+          <i class="bi bi-calendar-event"></i> 活動日期: {{ formatArrayDisplay(concert.pdt, '、') }}
+        </small>
+        <br>
+        <!-- 如果有票價資訊則顯示 -->
+        <small class="text-primary" *ngIf="concert.prc && concert.prc.length > 0">
+          <i class="bi bi-cash-coin"></i> 票價: {{ formatPriceDisplay(concert.prc) }}
+        </small>
+        <!-- 如果沒有票價資訊或票價陣列為空 -->
+        <small class="text-muted" *ngIf="!concert.prc || concert.prc.length === 0">
+          <i class="bi bi-cash-coin"></i> 票價: 洽詢主辦
+        </small>
+      </a>
+    </div>
+  </div>
+
+  <!-- 如果沒有正在載入、沒有錯誤訊息，且沒有符合條件的演唱會 -->
+  <div *ngIf="!isLoading && !errorMessage && upcomingTicketingConcerts.length === 0">
+    <div class="alert alert-info" role="alert">
+      <i class="bi bi-info-circle-fill"></i> 目前未來 7 天內沒有即將開始售票的演唱會。
+    </div>
+  </div>
+</div>
