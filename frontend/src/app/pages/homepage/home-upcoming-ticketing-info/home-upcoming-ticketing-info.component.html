@@ -21,29 +21,33 @@
          [href]="concert.url || '#'"
          target="_blank"
          class="list-group-item list-group-item-action flex-column align-items-start mb-2 shadow-sm concert-ticket-item">
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">{{ concert.tit }}</h5>
+        <div class="d-flex flex-column flex-sm-row w-100 justify-content-sm-between align-items-start align-items-sm-center">
+          <h5 class="mb-1 me-md-2">{{ concert.tit }}</h5>
           <!-- 顯示落在7天內的、最早的那個售票日期，並格式化 -->
-          <small class="text-muted">
+          <span class="text-muted mt-1 mt-md-0 text-start text-md-end">
             <i class="bi bi-alarm"></i>
-            售票: {{ formatDate(getEarliestValidSdtDate(concert.sdt, todayForDisplay(), sevenDaysLaterForDisplay()), 'MM/dd HH:mm') || formatArrayDisplay(concert.sdt, ' / ') }}
-          </small>
+            售票 - {{ formatDate(getEarliestValidSdtDate(concert.sdt, todayForDisplay(), sevenDaysLaterForDisplay()), 'MM/dd HH:mm') || formatArrayDisplay(concert.sdt, ' / ') }}
+          </span>
         </div>
-        <p class="mb-1">
+        <p class="mb-0">
           <i class="bi bi-geo-alt-fill"></i> {{ concert.cit !== ' -' ? concert.cit : '多城市' }}
           <!-- 如果地點存在且不是預設的 '-'，則顯示 -->
           <span *ngIf="concert.loc && concert.loc.length > 0 && concert.loc[0] !== ' -'">
-                 - {{ formatArrayDisplay(concert.loc, '、') }}
+                 / {{ formatArrayDisplay(concert.loc, '、') }}
             </span>
         </p>
+
         <small class="text-success">
           <i class="bi bi-calendar-event"></i> 活動日期: {{ formatArrayDisplay(concert.pdt, '、') }}
         </small>
+
         <br>
+
         <!-- 如果有票價資訊則顯示 -->
         <small class="text-primary" *ngIf="concert.prc && concert.prc.length > 0">
           <i class="bi bi-cash-coin"></i> 票價: {{ formatPriceDisplay(concert.prc) }}
         </small>
+
         <!-- 如果沒有票價資訊或票價陣列為空 -->
         <small class="text-muted" *ngIf="!concert.prc || concert.prc.length === 0">
           <i class="bi bi-cash-coin"></i> 票價: 洽詢主辦
