@@ -1,16 +1,45 @@
 /* src/app/pages/homepage/home-concert-info/home-concert-info.component.css */
 .card-title {
   font-weight: bold;
+  /* 應用截斷樣式 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block; /* 或者確保其父容器能限制其寬度 */
+  width: 100%;    /* 確保標題會嘗試填充可用寬度以便截斷 */
+}
+
+.card-subtitle { /* 如果副標題也需要截斷 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%;
 }
 
 .card ul li {
   font-size: 0.9rem;
   margin-bottom: 0.3rem;
+  display: flex;         /* 將 li 變為 flex 容器以更好地控制內部對齊 */
+  align-items: baseline; /* 嘗試讓 strong 和後面的 span 基線對齊 */
 }
 
 .card ul li strong {
   display: inline-block;
   min-width: 120px; /* 調整標籤寬度以對齊 */
+  flex-shrink: 0;     /* 防止 strong 標籤在空間不足時被壓縮 */
+  margin-right: 0.5em;/* 在 strong 和後面的值之間加一點固定間距 */
+}
+
+/* 用於截斷列表項中的值 */
+.truncate-list-item-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block; /* 或 block，取決於是否希望它佔滿剩餘寬度 */
+  flex-grow: 1;        /* 讓這個 span 佔據 li 中剩餘的可用空間 */
+  min-width: 0;        /* 重要！與 flex-grow:1 配合，允許元素收縮並應用 ellipsis */
+  vertical-align: baseline; /* 確保與 strong 標籤基線對齊 */
 }
 
 .card-body {

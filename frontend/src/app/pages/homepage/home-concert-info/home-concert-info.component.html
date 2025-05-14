@@ -23,11 +23,26 @@
             <h6 class="card-subtitle mb-2 text-muted">{{ concert.cit !== ' -' ? concert.cit : '未提供城市' }}</h6>
 
             <ul class="list-unstyled mt-3 mb-4 flex-grow-1">
-              <li><strong><i class="bi bi-calendar-event"></i> 活動日期:</strong> {{ formatArrayDisplay(concert.pdt, '、') }}</li>
-              <li><strong><i class="bi bi-ticket-perforated"></i> 售票時間:</strong> {{ formatArrayDisplay(concert.sdt, '、') }}</li>
-              <li><strong><i class="bi bi-geo-alt"></i> 地點:</strong> {{ formatArrayDisplay(concert.loc, '、') }}</li>
-              <li><strong><i class="bi bi-cash-coin"></i> 票價:</strong> {{ formatPriceDisplay(concert.prc) }}</li>
-              <li><strong><i class="bi bi-clock"></i> API時間:</strong> {{ formatDate(concert.tim, 'yyyy/MM/dd') }}</li>
+              <li>
+                <strong><i class="bi bi-calendar-event"></i> 活動日期:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.pdt, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-ticket-perforated"></i> 售票時間:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.sdt, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-geo-alt"></i> 地點:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.loc, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-cash-coin"></i> 票價:</strong>
+                <span class="truncate-list-item-value">{{ formatPriceDisplay(concert.prc) }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-clock"></i> API時間:</strong>
+                <span class="truncate-list-item-value">{{ formatDate(concert.tim, 'yyyy/MM/dd') }}</span>
+              </li>
             </ul>
 
             <div class="mt-auto text-center">
