@@ -1,5 +1,7 @@
 <div class="upcoming-ticketing-container container mt-4">
-  <h3 class="text-center fw-bold py-3"><i class="bi bi-calendar-check"></i> 近期售票 (7日內)</h3>
+  <h2 class="text-center fw-bold py-3">
+    <i class="bi bi-calendar-check"></i> 近期售票 (7日內)
+  </h2>
 
   <div *ngIf="isLoading" class="text-center my-5">
     <div class="spinner-border text-primary" role="status">
@@ -56,4 +58,7 @@
       <i class="bi bi-info-circle-fill"></i> 目前未來 7 天內沒有即將開始售票的演唱會。
     </div>
   </div>
+
+  <hr *ngIf="!isLoading && !errorMessage" class="my-4">
+
 </div>

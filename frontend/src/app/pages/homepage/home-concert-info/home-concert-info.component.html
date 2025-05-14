@@ -1,5 +1,7 @@
 <div class="concert-info-container container mt-4">
-  <h2 class="text-center py-3 fw-bold">最新演唱會資訊</h2>
+  <h2 class="text-center py-3 fw-bold">
+    <i class="bi bi-calendar-event me-2"></i>最新演唱會資訊
+  </h2>
 <!--  <p class="text-muted mb-4">(從 /api/more-data 獲取，目前顯示前 6 筆)</p>-->
 
   <div *ngIf="isLoading" class="text-center my-5">
@@ -60,4 +62,13 @@
       資料尚未從伺服器回傳，或 API 回應格式不符預期。
     </div>
   </div>
+
+  <div *ngIf="!isLoading && !errorMessage" class="text-center mt-4 mb-2">
+    <a href="#" class="btn btn-outline-primary btn-lg">
+      查看更多演唱會資訊
+    </a>
+  </div>
+
+  <hr *ngIf="!isLoading && !errorMessage" class="my-4">
+
 </div>
