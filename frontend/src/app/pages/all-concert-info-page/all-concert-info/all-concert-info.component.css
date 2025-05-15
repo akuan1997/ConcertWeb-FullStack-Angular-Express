@@ -1,6 +1,6 @@
 /* src/app/pages/all-concert-info/all-concert-info.component.css */
 
-/* ... (你現有的 .card-title, .card-subtitle 等樣式保持不變) ... */
+/* ... (你現有的 .card-title, .card-subtitle, .header-title 等樣式保持不變) ... */
 
 .card-title {
   font-weight: bold;
@@ -23,12 +23,12 @@
   font-size: 0.9rem;
   margin-bottom: 0.3rem;
   display: flex;
-  align-items: baseline; /* Changed from center to baseline for better alignment with icon */
+  align-items: baseline;
 }
 
 .card ul li strong {
   display: inline-block;
-  min-width: 120px; /* Adjust if necessary for your longest label */
+  min-width: 120px;
   flex-shrink: 0;
   margin-right: 0.5em;
 }
@@ -37,10 +37,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: inline-block; /* Or display: block; if it should take full remaining width */
-  flex-grow: 1; /* Allows it to take remaining space */
-  min-width: 0; /* Important for flex item truncation */
-  vertical-align: baseline; /* Align with the strong tag */
+  display: inline-block;
+  flex-grow: 1;
+  min-width: 0;
+  vertical-align: baseline;
 }
 
 .card-body {
@@ -54,60 +54,46 @@
 
 .bi {
   margin-right: 0.3em;
-  vertical-align: text-bottom; /* Or adjust as needed, e.g., middle, -0.125em */
+  vertical-align: text-bottom;
 }
 
-/* Styles for loading spinner inside button if needed */
 .btn .spinner-border-sm {
   vertical-align: middle;
 }
 
-
-/* --- 新增或修改的樣式 --- */
-
-/* .header-row 已有 position-relative via Bootstrap class */
-
-/* 手機版樣式 (Bootstrap 預設處理得很好) */
-/* .header-title 預設是 order-1, w-100, text-center */
-/* .header-switcher 預設是 order-2, mt-2 */
-
-/* 桌面版 (md and up) 的特定樣式 */
-@media (min-width: 768px) { /* Bootstrap 'md' breakpoint */
+/* --- 之前新增或修改的 Header 樣式 --- */
+@media (min-width: 768px) {
   .header-row {
-    /* align-items-md-center 確保 switcher 垂直居中 (如果它仍在流中) */
   }
 
   .header-title {
     position: absolute;
     left: 50%;
-    top: 50%; /* 垂直居中於父元素 (.header-row) 的高度 */
+    top: 50%;
     transform: translate(-50%, -50%);
-    width: auto; /* 覆蓋手機版的 w-100，使其寬度由內容決定 */
-    /* order-1 在 absolute positioning 下不再重要 */
-    /* text-center 仍然適用於內部的 h2 */
+    width: auto;
   }
 
   .header-switcher {
-    /* 將切換器推到最右邊 */
     margin-left: auto;
-    /* mt-md-0 已經透過 class 設定，確保垂直對齊 */
-    /* order-2 在這裡仍然有效，但因為 title 是 absolute，所以 switcher 會是第一個流內元素 */
-    /* 如果希望它也絕對定位以避免任何潛在的寬度計算影響，可以這樣做：
-    position: absolute;
-    right: 0; // 或 desired padding, e.g., 1rem
-    top: 50%;
-    transform: translateY(-50%);
-    margin-top: 0; // 取消 mt-md-0
-    */
   }
-}
-
-/* 針對 .header-title 內的 h2，確保在桌面版時 margin-bottom 為 0 */
-/* 因為父 div .header-title 已經用 top: 50% translateY(-50%) 處理垂直居中 */
-@media (min-width: 768px) {
   .header-title h2.mb-md-0 {
-    margin-bottom: 0 !important; /* 確保覆蓋 Bootstrap */
+    margin-bottom: 0 !important;
   }
 }
+/* --- 結束 Header 樣式 --- */
 
-/* --- 結束新增或修改的樣式 --- */
+
+/* --- 新增：手機版分頁樣式 --- */
+@media (max-width: 767.98px) { /* 針對小於 Bootstrap 'md' 斷點的螢幕 (即 sm 和 xs) */
+  .pagination-mobile-wrap {
+    flex-wrap: wrap;         /* 允許分頁項目換行 */
+    justify-content: center; /* 當項目換行後，讓每一行的項目也居中顯示 */
+  }
+
+  /* 可選：如果換行後的項目之間垂直間距太小，可以稍微調整 */
+  /* .pagination-mobile-wrap .page-item {
+    margin-bottom: 0.25rem; /* 增加一點底邊距 */
+  /* } */
+}
+/* --- 結束手機版分頁樣式 --- */

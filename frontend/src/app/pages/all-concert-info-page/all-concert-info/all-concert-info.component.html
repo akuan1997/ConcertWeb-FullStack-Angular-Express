@@ -143,15 +143,16 @@
 
 
   <!-- Pagination Controls (Only for pagination mode) -->
-  <nav *ngIf="displayMode === 'pagination' && totalPages > 1 && !isLoading && allConcerts.length > 0" aria-label="Concert navigation" class="mt-4 d-flex justify-content-center">
-    <ul class="pagination">
+  <nav *ngIf="displayMode === 'pagination' && totalPages > 1 && !isLoading && allConcerts.length > 0"
+       aria-label="Concert navigation"
+       class="mt-4 d-flex justify-content-center">
+    <ul class="pagination pagination-mobile-wrap"> <!-- <<<< 在這裡添加 pagination-mobile-wrap class -->
       <li class="page-item" [class.disabled]="currentPage === 1 || isLoading">
         <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage - 1)" aria-label="Previous">
           <span aria-hidden="true">«</span>
           <span class="visually-hidden">上一頁</span>
         </a>
       </li>
-      <!-- Simple page number display. For many pages, you'll want a more complex component -->
       <li
         *ngFor="let pageNum of paginationPages"
         class="page-item"
