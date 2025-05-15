@@ -1,16 +1,35 @@
 <div class="concert-info-container container mt-4">
-  <!-- Container for Title and Mode Switcher - Set to position: relative -->
-  <div class="d-flex justify-content-end align-items-center position-relative mb-3" style="min-height: 50px;">
+  <!-- Header Row:
+        - Default (small screens): flex-column, items centered horizontally
+        - md and up: flex-row, items aligned vertically center
+  -->
+  <div class="d-flex flex-column flex-md-row align-items-center position-relative mb-3" style="min-height: 80px;">
+    <!-- Adjusted min-height for potential two lines on small screens -->
 
-    <!-- Title - Absolutely Positioned for True Centering -->
-    <div class="position-absolute top-50 start-50 translate-middle text-center">
-      <h2 class="py-3 fw-bold mb-0 d-inline-block">
+    <!-- Title:
+          - Default (small screens): Part of flex column, centered by parent's align-items-center. Text within is centered.
+          - md and up: Absolutely positioned to true center.
+          - order-1 ensures it's visually first on small screens in the column.
+          - order-md-0 makes it effectively first for md+ (though absolute pos overrides flow order).
+    -->
+    <div class="text-center order-1 order-md-0 w-100 w-md-auto position-md-absolute top-md-50 start-md-50 translate-md-middle">
+      <!-- w-100 on small screens to allow text-center to work across full width if needed -->
+      <!-- w-md-auto for md+ so absolute positioning behaves as before -->
+      <h2 class="fw-bold mb-2 mb-md-0 py-md-3 d-inline-block">
+        <!-- mb-2 on small for spacing, mb-md-0 to reset. py-md-3 for vertical padding on md+ -->
         <i class="bi bi-calendar-event me-2"></i>最新演唱會資訊
       </h2>
     </div>
 
-    <!-- Mode Switcher - Parent's justify-content-end will place this on the right -->
-    <div> <!-- Wrapper for btn-group. ms-auto is no longer needed here. -->
+    <!-- Mode Switcher:
+          - Default (small screens): Part of flex column, centered by parent's align-items-center. Added margin-top.
+          - md and up: Pushed to the right using ms-md-auto.
+          - order-2 ensures it's second on small screens.
+          - order-md-1 places it after the (conceptually) first title for md+ row layout.
+    -->
+    <div class="order-2 order-md-1 mt-2 mt-md-0 ms-md-auto">
+      <!-- mt-2 for spacing below title on small screens, mt-md-0 to reset. -->
+      <!-- ms-md-auto to push to the right on medium screens and up. -->
       <div class="btn-group" role="group" aria-label="Display mode">
         <button
           type="button"
