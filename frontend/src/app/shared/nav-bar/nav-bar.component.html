@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Fourth navbar example">
+<nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Fourth navbar example">
   <div class="container-fluid">
     <a [routerLink]="['/']" class="navbar-brand d-md-none">Concert-Info Site</a>
 
@@ -42,8 +42,8 @@
           (keyup.enter)="onSearchSubmit(searchInput.value)"
           >
           <!-- 新增搜尋按鈕 -->
-          <button class="btn btn-outline-success" type="submit">
-            <i class="bi bi-search"></i> <!-- 使用 Bootstrap Icon -->
+          <button class="btn btn-outline-light" type="submit">
+          <i class="bi bi-search"></i> <!-- 使用 Bootstrap Icon -->
             <!-- 或者直接用文字 <span class="d-none d-sm-inline">搜尋</span> -->
           </button>
         </form>
