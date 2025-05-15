@@ -12,7 +12,6 @@
       <div class="d-flex flex-column flex-md-row align-items-center">
         <ul class="navbar-nav mb-2 mb-md-0 text-center text-md-start">
           <li class="nav-item">
-            <!-- 修改: Home 連結到根路徑 -->
             <a class="nav-link active" aria-current="page" [routerLink]="['/']">Home</a>
           </li>
           <li class="nav-item">
@@ -31,22 +30,22 @@
           </li>
         </ul>
         <!-- 修改表單和輸入框 -->
-        <form class="ms-md-3 mt-2 mt-md-0" (ngSubmit)="onSearchSubmit(searchInput.value)" #searchForm="ngForm">
+        <form class="ms-md-3 mt-2 mt-md-0 d-flex" (ngSubmit)="onSearchSubmit(searchInput.value)" #searchForm="ngForm">
           <input
             #searchInput
-            class="form-control"
-            type="text"
-            placeholder="搜尋演唱會..."
-            aria-label="Search"
-            name="searchTerm"
-            ngModel
-            (keyup.enter)="onSearchSubmit(searchInput.value)"
+            class="form-control me-2"
+          type="text"
+          placeholder="搜尋演唱會..."
+          aria-label="Search"
+          name="searchTerm"
+          ngModel
+          (keyup.enter)="onSearchSubmit(searchInput.value)"
           >
-          <!-- 可以選擇性地添加一個搜尋按鈕 -->
-          <!--
-          <button type="submit" class="btn btn-outline-success ms-2 d-none d-md-inline-block">Search</button>
-          <button type="submit" class="btn btn-success mt-2 d-md-none w-100">Search</button>
-          -->
+          <!-- 新增搜尋按鈕 -->
+          <button class="btn btn-outline-success" type="submit">
+            <i class="bi bi-search"></i> <!-- 使用 Bootstrap Icon -->
+            <!-- 或者直接用文字 <span class="d-none d-sm-inline">搜尋</span> -->
+          </button>
         </form>
       </div>
 
