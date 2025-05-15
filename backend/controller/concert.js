@@ -32,12 +32,21 @@ const getKeywordSearchData  = asyncWrapper(async (req, res) => {
         const limit = parseInt(req.query.limit) || 21;
         const searchText = req.query.text ? req.query.text.trim() : "";
         const query = {};
+
         if (searchText) {
-            query.tit = {$regex: searchText, $options: 'i'};
+            query.$or = [
+                { tit: { $regex: searchText, $options: 'i' } },
+                { int: { $regex: searchText, $options: 'i' } }
+            ];
         }
+
         const totalItems = await concertModel.countDocuments(query);
         const totalPages = Math.ceil(totalItems / limit);
-        const data = await concertModel.find(query).skip((page - 1) * limit).limit(limit);
+        const data = await concertModel.find(query)
+            .sort({ "tim": -1 }) // 建議也加上排序，與 getAllData 一致
+            .skip((page - 1) * limit)
+            .limit(limit);
+
         res.status(200).json({page, totalPages, data});
     })
 ;
