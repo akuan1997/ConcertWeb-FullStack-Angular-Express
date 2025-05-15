@@ -27,7 +27,7 @@ const getMoreData = asyncWrapper(async (req, res) => {
     });
 });
 
-const getSearchData = asyncWrapper(async (req, res) => {
+const getKeywordSearchData  = asyncWrapper(async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 21;
         const searchText = req.query.text ? req.query.text.trim() : "";
@@ -45,5 +45,5 @@ const getSearchData = asyncWrapper(async (req, res) => {
 module.exports = {
     getAllData,
     getMoreData,
-    getSearchData
+    getKeywordSearchData
 }

@@ -4,11 +4,11 @@ const router = express.Router();
 const {
     getAllData,
     getMoreData,
-    getSearchData
+    getKeywordSearchData
 } = require("../controller/concert")
 
 router.route("/data").get(getAllData);
 router.route("/more-data").get(getMoreData);
-router.route("/search").get(getSearchData);
+router.route("/getKeywordSearchData").get(getKeywordSearchData);
 
 module.exports = router;
