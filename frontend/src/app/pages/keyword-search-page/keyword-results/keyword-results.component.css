@@ -1,0 +1,99 @@
+/* src/app/pages/all-concert-info/all-concert-info.component.css */
+
+/* ... (你現有的 .card-title, .card-subtitle, .header-title 等樣式保持不變) ... */
+
+.card-title {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+}
+
+.card-subtitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+}
+
+.card ul li {
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: baseline;
+}
+
+.card ul li strong {
+  display: inline-block;
+  min-width: 120px;
+  flex-shrink: 0;
+  margin-right: 0.5em;
+}
+
+.truncate-list-item-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  flex-grow: 1;
+  min-width: 0;
+  vertical-align: baseline;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.card .mt-auto {
+  margin-top: auto;
+}
+
+.bi {
+  margin-right: 0.3em;
+  vertical-align: text-bottom;
+}
+
+.btn .spinner-border-sm {
+  vertical-align: middle;
+}
+
+/* --- 之前新增或修改的 Header 樣式 --- */
+@media (min-width: 768px) {
+  .header-row {
+  }
+
+  .header-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+  }
+
+  .header-switcher {
+    margin-left: auto;
+  }
+  .header-title h2.mb-md-0 {
+    margin-bottom: 0 !important;
+  }
+}
+/* --- 結束 Header 樣式 --- */
+
+
+/* --- 新增：手機版分頁樣式 --- */
+@media (max-width: 767.98px) { /* 針對小於 Bootstrap 'md' 斷點的螢幕 (即 sm 和 xs) */
+  .pagination-mobile-wrap {
+    flex-wrap: wrap;         /* 允許分頁項目換行 */
+    justify-content: center; /* 當項目換行後，讓每一行的項目也居中顯示 */
+  }
+
+  /* 可選：如果換行後的項目之間垂直間距太小，可以稍微調整 */
+  /* .pagination-mobile-wrap .page-item {
+    margin-bottom: 0.25rem; /* 增加一點底邊距 */
+  /* } */
+}
+/* --- 結束手機版分頁樣式 --- */

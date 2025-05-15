@@ -1,1 +1,125 @@
-<p>keyword-results works!</p>
+<div class="keyword-results-container container mt-4">
+  <!-- Header: Display Search Term -->
+  <div class="text-center mb-4">
+    <h2 *ngIf="currentSearchText && !isLoading" class="fw-bold">
+      <i class="bi bi-search me-2"></i>搜尋結果: "{{ currentSearchText }}"
+    </h2>
+    <h2 *ngIf="!currentSearchText && !isLoading && !errorMessage" class="fw-bold text-muted">
+      請在上方導覽列輸入關鍵字進行搜尋
+    </h2>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">正在搜尋...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+    <button *ngIf="currentSearchText" (click)="fetchSearchResults()" class="btn btn-sm btn-warning ms-3">重試</button>
+  </div>
+
+  <!-- Search Results Display -->
+  <div *ngIf="!isLoading && !errorMessage && searchResults.length > 0">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div *ngFor="let concert of searchResults" class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <div class="text-center">
+              <h5 class="card-title">{{ concert.tit }}</h5>
+              <h6 class="card-subtitle my-3 text-muted fw-bold">{{ concert.cit !== ' -' ? concert.cit : '未提供城市' }}</h6>
+            </div>
+            <ul class="list-unstyled flex-grow-1">
+              <li>
+                <strong><i class="bi bi-calendar-event"></i> 活動日期:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.pdt, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-ticket-perforated"></i> 售票時間:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.sdt, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-geo-alt"></i> 地點:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.loc, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-cash-coin"></i> 票價:</strong>
+                <span class="truncate-list-item-value">{{ formatPriceDisplay(concert.prc) }}</span>
+              </li>
+            </ul>
+            <div class="mt-auto text-center">
+              <a *ngIf="concert.url" [href]="concert.url" target="_blank" class="btn btn-primary btn-sm me-2">
+                <i class="bi bi-link-45deg"></i> 活動/售票連結
+              </a>
+              <p *ngIf="!concert.url && !concert.web" class="text-muted small mt-2">無相關連結</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results Message: errorMessage 會處理 "找不到..." 的情況 -->
+  <!-- 如果 errorMessage 為空但 searchResults 也為空 (例如 API 異常但未設 errorMessage), 可以加一個通用提示 -->
+  <div *ngIf="!isLoading && !errorMessage && searchResults.length === 0 && currentSearchText">
+    <!-- This specific case is now handled by errorMessage, so this div might not be strictly needed
+         if the `errorMessage` for "not found" is considered sufficient. -->
+  </div>
+
+
+  <!-- Pagination Controls -->
+  <nav *ngIf="!isLoading && !errorMessage && totalPages > 1 && searchResults.length > 0"
+       aria-label="Search results navigation"
+       class="mt-4 d-flex justify-content-center">
+    <ul class="pagination pagination-mobile-wrap">
+      <!-- Previous Button -->
+      <li class="page-item" [class.disabled]="currentPage === 1 || isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage - 1)" aria-label="Previous">
+          <span aria-hidden="true">«</span>
+        </a>
+      </li>
+
+      <!-- First page and ellipsis -->
+      <li *ngIf="paginationPages[0] > 1" class="page-item" [class.disabled]="isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(1)">1</a>
+      </li>
+      <li *ngIf="paginationPages[0] > 2" class="page-item disabled">
+        <span class="page-link">…</span>
+      </li>
+
+      <!-- Page Numbers -->
+      <li
+        *ngFor="let pageNum of paginationPages"
+        class="page-item"
+        [class.active]="pageNum === currentPage"
+        [class.disabled]="isLoading"
+      >
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(pageNum)">{{ pageNum }}</a>
+      </li>
+
+      <!-- Ellipsis and Last page -->
+      <li *ngIf="paginationPages[paginationPages.length - 1] < totalPages - 1" class="page-item disabled">
+        <span class="page-link">…</span>
+      </li>
+      <li *ngIf="paginationPages[paginationPages.length - 1] < totalPages" class="page-item" [class.disabled]="isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(totalPages)">{{ totalPages }}</a>
+      </li>
+
+      <!-- Next Button -->
+      <li class="page-item" [class.disabled]="currentPage === totalPages || isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage + 1)" aria-label="Next">
+          <span aria-hidden="true">»</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div *ngIf="!isLoading && !errorMessage && totalPages > 0 && searchResults.length > 0" class="text-center mt-2">
+    <small>第 {{ currentPage }} 頁 / 共 {{ totalPages }} 頁 (本頁顯示 {{ searchResults.length }} 筆)</small>
+  </div>
+
+  <hr *ngIf="!isLoading && !errorMessage && currentSearchText" class="my-4">
+</div>
