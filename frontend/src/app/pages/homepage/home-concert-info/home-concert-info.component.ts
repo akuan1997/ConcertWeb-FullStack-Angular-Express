@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common'; // 引入 DatePipe
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, tap, of, finalize, map } from 'rxjs'; // 引入 map 操作符
+import { RouterLink } from '@angular/router';
 
 // 1. 定義 Concert Interface (基於後端的 Mongoose Schema)
 export interface Concert {
@@ -41,6 +42,7 @@ export interface ProcessedConcertResponse {
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink
   ],
   providers: [DatePipe], // 為了在 TS 中使用 DatePipe (如果需要，模板中通常不用)
   templateUrl: './home-concert-info.component.html',
