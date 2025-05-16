@@ -10,6 +10,7 @@ export interface ApiKeywordSearchResponse {
   data: Concert[];
   page: number;
   totalPages: number;
+  nbHits: number;
 }
 
 @Component({
@@ -34,6 +35,7 @@ export class KeywordResultsComponent implements OnInit, OnDestroy { // <--- 假�
   currentPage: number = 1;
   totalPages: number = 0;
   itemsPerPage: number = 30;
+  totalItems: number = 0;
 
   private destroy$ = new Subject<void>();
 
@@ -111,6 +113,7 @@ export class KeywordResultsComponent implements OnInit, OnDestroy { // <--- 假�
 
     this.isLoading = true;
     this.errorMessage = null; // 清除之前的錯誤信息
+    this.totalItems = 0;
 
     let params = new HttpParams()
       .set('text', this.currentSearchText)
@@ -125,6 +128,7 @@ export class KeywordResultsComponent implements OnInit, OnDestroy { // <--- 假�
             this.searchResults = response.data;
             this.currentPage = response.page;
             this.totalPages = response.totalPages;
+            this.totalItems = response.nbHits;
             if (response.data.length === 0 && this.currentPage === 1) { // 只有第一頁無結果才顯示找不到
               this.errorMessage = `找不到與 "${this.currentSearchText}" 相關的演唱會資訊。`;
             }

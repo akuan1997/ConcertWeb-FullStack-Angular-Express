@@ -2,7 +2,7 @@
   <!-- Header: Display Search Term -->
   <div class="text-center mb-4">
     <h2 *ngIf="currentSearchText && !isLoading" class="fw-bold">
-      <i class="bi bi-search me-2"></i>搜尋結果: "{{ currentSearchText }}"
+      <i class="bi bi-search me-2"></i>搜尋結果: "{{ currentSearchText }}" ({{ totalItems }} 筆)
     </h2>
     <h2 *ngIf="!currentSearchText && !isLoading && !errorMessage" class="fw-bold text-muted">
       請在上方導覽列輸入關鍵字進行搜尋

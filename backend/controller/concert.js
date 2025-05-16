@@ -58,7 +58,7 @@ const getKeywordSearchData  = asyncWrapper(async (req, res) => {
         data,
         page,
         totalPages,
-        nbHits: data.length
+        nbHits: totalItems
     });
 });
 
