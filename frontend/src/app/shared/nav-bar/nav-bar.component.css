@@ -1,0 +1,34 @@
+/* 針對桌面視圖 (通常 md斷點是 768px 以上) */
+@media (min-width: 768px) {
+  .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    /*
+      Bootstrap 5 在 dropdown-menu 上可能會有一些 margin-top 來與 toggle 按鈕隔開。
+      如果懸停時看起來有點奇怪 (例如，選單出現的位置比預期低一點點)，
+      可以嘗試取消這個 margin。
+    */
+    margin-top: 0; /* 可選，視情況調整 */
+  }
+
+  /* 可選：讓下拉箭頭在懸停時也反轉，模擬展開狀態 */
+  /*
+  .navbar-nav .nav-item.dropdown:hover .dropdown-toggle::after {
+    transform: rotate(180deg);
+  }
+  */
+}
+
+/*
+  為什麼要用 @media query?
+  因為在移動裝置上，懸停 (hover) 的體驗通常不好，點擊觸發是比較好的方式。
+  所以我們只在較大螢幕上啟用懸停展開。
+  Bootstrap 的 navbar-expand-md 表示在 md 斷點以上 navbar 才會展開，
+  所以我們的懸停邏輯也最好跟著這個斷點。
+*/
+
+/* 如果你的下拉選單項目文字在某些情況下會換行，導致選單寬度不足，可以加上這個 */
+/*
+.dropdown-menu {
+  min-width: max-content;
+}
+*/
