@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { HeroSectionComponent } from '../../shared/hero-section/hero-section.component';
-import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 import { KeywordResultsComponent } from './keyword-results/keyword-results.component';
 import { AboutComponent } from '../../shared/about/about.component';
 
@@ -11,7 +10,6 @@ import { AboutComponent } from '../../shared/about/about.component';
   imports: [
     NavBarComponent,
     HeroSectionComponent,
-    KeywordSearchComponent,
     KeywordResultsComponent,
     AboutComponent
   ],
