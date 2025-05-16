@@ -129,7 +129,7 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
     if (start_date) {
         startDateObj = parseQueryDateParam(start_date);
         if (startDateObj) {
-            startDateObj.setHours(0, 0, 0, 0); // 確保是當天的開始
+            startDateObj.setHours(0, 0, 0, 0);
         } else {
             return res.status(400).json({ message: "無效的 start_date 格式。請使用 YYYYMMDD。" });
         }
@@ -139,23 +139,20 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
     if (end_date) {
         endDateObj = parseQueryDateParam(end_date);
         if (endDateObj) {
-            endDateObj.setHours(23, 59, 59, 999); // 確保是當天的結束
+            endDateObj.setHours(23, 59, 59, 999);
         } else {
             return res.status(400).json({ message: "無效的 end_date 格式。請使用 YYYYMMDD。" });
         }
     }
 
-    // 如果提供了兩個日期，且 start_date 晚於 end_date
     if (startDateObj && endDateObj && startDateObj > endDateObj) {
         return res.status(400).json({ message: "start_date 不能晚於 end_date。" });
     }
 
-    // 如果 start_date 和 end_date 都沒有提供
+    // 處理沒有日期參數的情況 (這個部分可以保持不變，它會按 tim 排序)
     if (!startDateObj && !endDateObj) {
-        // 回退到類似 getAllData 的行為，或返回錯誤
-        // return res.status(400).json({ message: "請至少提供 start_date 或 end_date。" });
         const allData = await concertModel.find()
-            .sort({"tim": -1}) // 假設 'tim' 仍然是主要的排序欄位
+            .sort({"tim": -1}) // 如果沒有日期篩選，仍按 tim 排序
             .skip(skip)
             .limit(limit);
         const totalItems = await concertModel.countDocuments();
@@ -167,24 +164,17 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
         });
     }
 
-    // 先獲取所有文件。
-    // 對於非常大的集合，這樣效率不高。
-    // 如果效能是個問題，可以考慮使用 MongoDB 聚合框架進行伺服器端過濾。
-    const allItems = await concertModel.find({}); // 獲取所有資料
+    const allItems = await concertModel.find({});
 
     const filteredByDate = allItems.filter(item => {
-        // *** 主要修改處：從 sdt 改為 pdt ***
         if (!item.pdt || !Array.isArray(item.pdt) || item.pdt.length === 0) {
-            return false; // 跳過沒有 pdt 或 pdt 為空的項目
+            return false;
         }
-
-        // *** 檢查 pdt 陣列中的任何一個日期是否在範圍內 ***
         return item.pdt.some(pdtStr => {
-            const pdtDate = parsePdtDateString(pdtStr); // 使用新的解析函數
-            if (!pdtDate) { // 如果此特定 pdt 項目解析失敗
+            const pdtDate = parsePdtDateString(pdtStr);
+            if (!pdtDate) {
                 return false;
             }
-
             let isInRange = true;
             if (startDateObj && pdtDate < startDateObj) {
                 isInRange = false;
@@ -196,24 +186,39 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
         });
     });
 
-    // 對 JavaScript 過濾後的陣列依 'tim' 排序
+    // --- 排序邏輯修改開始 ---
     const sortedData = filteredByDate.sort((a, b) => {
-        // 假設 'tim' 是一個可以轉換為 Date 的欄位
-        const dateA = a.tim ? new Date(a.tim) : new Date(0); // 如果 tim 不存在則使用一個很早的日期
-        const dateB = b.tim ? new Date(b.tim) : new Date(0);
-        return dateB - dateA; // tim 降冪排序 (新的在前)
+        // 輔助函數：從 pdt 陣列中獲取最早的有效日期
+        const getEarliestPdtDate = (pdtArray) => {
+            if (!pdtArray || pdtArray.length === 0) return null;
+            return pdtArray
+                .map(pdtStr => parsePdtDateString(pdtStr)) // 將字串轉換為 Date 物件
+                .filter(date => date !== null)             // 過濾掉無效日期
+                .sort((d1, d2) => d1.getTime() - d2.getTime()) // 按時間升冪排序
+                [0] || null; // 取第一個 (最早的)，如果沒有有效日期則為 null
+        };
+
+        const earliestPdtA = getEarliestPdtDate(a.pdt);
+        const earliestPdtB = getEarliestPdtDate(b.pdt);
+
+        // 處理其中一個或兩個都沒有有效 pdt 日期的情況
+        if (!earliestPdtA && !earliestPdtB) return 0; // 兩者都無，視為相等
+        if (!earliestPdtA) return 1;  // 只有 A 無，A 排在後面
+        if (!earliestPdtB) return -1; // 只有 B 無，B 排在後面 (即 A 在前)
+
+        // 比較最早的 pdt 日期 (升冪排序：從 0101 到 1231)
+        return earliestPdtA.getTime() - earliestPdtB.getTime();
     });
+    // --- 排序邏輯修改結束 ---
 
-    const totalFilteredItems = sortedData.length;
-
-    // 對排序後的陣列應用分頁
+    const totalFilteredItems = sortedData.length; // 注意：這裡的 sortedData 是按 pdt 排序後的
     const paginatedData = sortedData.slice(skip, skip + limit);
 
     res.status(200).json({
         data: paginatedData,
         page,
         totalPages: Math.ceil(totalFilteredItems / limit),
-        nbHits: totalFilteredItems // 符合日期條件的總項目數
+        nbHits: totalFilteredItems
     });
 });
 
