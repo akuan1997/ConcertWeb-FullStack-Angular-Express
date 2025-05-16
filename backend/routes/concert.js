@@ -8,7 +8,7 @@ const {
 } = require("../controller/concert")
 
 router.route("/data").get(getRawData);
-router.route("/more-data").get(getAllData);
+router.route("/allData").get(getAllData);
 router.route("/getKeywordSearchData").get(getKeywordSearchData);
 
 module.exports = router;
