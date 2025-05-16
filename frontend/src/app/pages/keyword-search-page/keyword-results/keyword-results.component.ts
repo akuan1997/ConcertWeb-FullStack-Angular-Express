@@ -4,21 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router'; // Params 通常不需要直接導入
 import { Subject, of } from 'rxjs';
 import { takeUntil, catchError, tap, finalize } from 'rxjs/operators'; // switchMap 可能不需要了
-
-export interface Concert {
-  _id: string;
-  tit: string;
-  sdt: string[];
-  prc: number[];
-  pdt: string[];
-  loc: string[];
-  cit: string;
-  int?: string;
-  web?: string;
-  url?: string;
-  pin?: string;
-  tim: Date | string;
-}
+import { Concert } from '../../../shared/models/concert.model';
 
 export interface ApiKeywordSearchResponse {
   data: Concert[];

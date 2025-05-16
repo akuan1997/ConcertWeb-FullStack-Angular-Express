@@ -2,21 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, tap, of, finalize } from 'rxjs';
-
-export interface Concert {
-  _id: string;
-  tit: string;
-  sdt: string[];
-  prc: number[];
-  pdt: string[];
-  loc: string[];
-  cit: string;
-  int?: string;
-  web?: string;
-  url?: string;
-  pin?: string;
-  tim: Date | string;
-}
+import { Concert } from '../../../shared/models/concert.model';
 
 export interface ApiConcertResponse {
   data: Concert[];

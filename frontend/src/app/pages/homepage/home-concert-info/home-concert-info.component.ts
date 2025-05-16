@@ -3,22 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common'; // 引入 DatePipe
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, tap, of, finalize, map } from 'rxjs'; // 引入 map 操作符
 import { RouterLink } from '@angular/router';
-
-// 1. 定義 Concert Interface (基於後端的 Mongoose Schema)
-export interface Concert {
-  _id: string;         // Mongoose 自動產生
-  tit: string;         // 標題
-  sdt: string[];       // 開始日期/時間 (陣列 of strings)
-  prc: number[];       // 價格 (陣列 of numbers)
-  pdt: string[];       // 活動日期/時間 (陣列 of strings)
-  loc: string[];       // 地點 (陣列 of strings)
-  cit: string;         // 城市
-  int?: string;        // 介紹 (可選)
-  web?: string;        // 官方網站 (可選)
-  url?: string;        // 售票網址/活動網址 (可選)
-  pin?: string;        // 置頂/圖片 URL (可選)
-  tim: Date | string;  // API 排序用的時間戳 (後端是 Date，前端接收可能是 string)
-}
+import {Concert } from '../../../shared/models/concert.model';
 
 // 2. 更新 ApiConcertResponse 以使用 Concert Interface
 export interface ApiConcertResponse {

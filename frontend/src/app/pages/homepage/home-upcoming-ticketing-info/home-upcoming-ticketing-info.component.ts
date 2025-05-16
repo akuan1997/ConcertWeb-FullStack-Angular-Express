@@ -3,21 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap, finalize } from 'rxjs/operators';
-
-export interface Concert {
-  _id: string;
-  tit: string;
-  sdt: string[];       // 售票日期 - 此組件的關鍵
-  prc: number[];
-  pdt: string[];
-  loc: string[];
-  cit: string;
-  int?: string;
-  web?: string;
-  url?: string;
-  pin?: string;
-  tim: Date | string;
-}
+import { Concert } from '../../../shared/models/concert.model';
 
 export interface ApiConcertResponse {
   data: Concert[];

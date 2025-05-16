@@ -4,21 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Subscription, of } from 'rxjs';
 import { switchMap, catchError, tap, finalize } from 'rxjs/operators';
-
-export interface Concert {
-  _id: string;
-  tit: string; // Title
-  sdt: string[]; // Sale dates/times
-  prc?: number[] | string[]; // Prices (can be numbers or strings like "洽詢")
-  pdt: string[]; // Performance dates/times
-  loc: string[]; // Locations
-  cit: string;   // City
-  int?: string; // Introduction/details
-  web?: string; // Official website
-  url?: string; // More info / ticketing URL
-  pin?: string; // Image URL (not used in the new card style)
-  tim: Date | string; // Last update time
-}
+import { Concert } from '../../../shared/models/concert.model';
 
 export interface ApiConcertResponse {
   data: Concert[];
