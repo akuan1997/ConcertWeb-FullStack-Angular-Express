@@ -90,17 +90,6 @@ const getCitySelectionData = asyncWrapper(async (req, res) => {
         page: page,       // 可以選擇性地返回當前頁碼
         totalPages: Math.ceil(totalItems / limit) // 可以選擇性地返回總頁數
     });
-
-    // // const total = await concertModel.countDocuments(); // 總筆數
-    // // const totalPages = Math.ceil(total / limit); // 總頁數
-    //
-    // // 返回查詢結果
-    // res.status(200).json({
-    //     data,
-    //     // page,
-    //     // totalPages,
-    //     nbHits: data.length
-    // });
 });
 
 module.exports = {
