@@ -2,8 +2,24 @@ const concertModel = require("../models/concert");
 const asyncWrapper = require("../middleware/async");
 
 const getAllData = asyncWrapper(async (req, res) => {
-    const data = await concertModel.find()
-    res.status(200).json({data, nbHits: data.length})
+    // 從 req.query 中解構出 cit
+    const { cit } = req.query;
+
+    // 初始化一個空的查詢物件
+    const queryObject = {};
+
+    // 如果請求的 query 中包含了 cit 參數
+    if (cit) {
+        // 將 cit 添加到查詢條件中
+        // 這會查找 cit 欄位完全等於提供的 cit 值的文檔
+        queryObject.cit = cit;
+    }
+
+    // 使用 queryObject 來執行查詢
+    const data = await concertModel.find(queryObject);
+
+    // 返回查詢結果
+    res.status(200).json({ data, nbHits: data.length });
 });
 
 const getMoreData = asyncWrapper(async (req, res) => {
