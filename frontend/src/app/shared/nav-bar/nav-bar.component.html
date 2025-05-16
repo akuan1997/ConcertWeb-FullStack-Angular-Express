@@ -59,6 +59,20 @@
           </li>
         </ul>
 
+        <div class="d-flex flex-column flex-md-row align-items-center my-2 my-md-0 ms-md-2 navbar-date-filter-group">
+          <div class="d-flex align-items-center navbar-date-filter-item-group"> <!-- 包裹 label 和 input -->
+            <label for="start-date" class="text-white me-2 navbar-date-label">Start</label>
+            <input type="date" id="start-date" class="form-control form-control-sm navbar-date-input">
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-md-row align-items-center my-2 my-md-0 ms-md-2 navbar-date-filter-group">
+          <div class="d-flex align-items-center navbar-date-filter-item-group"> <!-- 包裹 label 和 input -->
+            <label for="end-date" class="text-white me-2 navbar-date-label">End</label>
+            <input type="date" id="end-date" class="form-control form-control-sm navbar-date-input">
+          </div>
+        </div>
+
         <form class="ms-md-3 mt-2 mt-md-0 d-flex" (ngSubmit)="onSearchSubmit(searchInput.value)" #searchForm="ngForm">
           <input
             #searchInput
