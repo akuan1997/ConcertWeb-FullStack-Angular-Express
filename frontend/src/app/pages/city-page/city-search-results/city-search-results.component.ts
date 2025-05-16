@@ -160,25 +160,31 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
     return filteredArr.join(separator);
   }
 
-  formatPriceDisplay(prices: (number | string)[] | undefined | null): string {
-    if (!prices || prices.length === 0) return '洽詢主辦單位';
-    const cleanedPrices = prices.map(p => String(p).trim()).filter(p => p && p !== '-' && p !== '');
-    if (cleanedPrices.length === 0) return '洽詢主辦單位';
-    const numericPrices = cleanedPrices.map(p => parseFloat(p)).filter(n => !isNaN(n)).sort((a, b) => a - b);
-    const nonNumericPrices = cleanedPrices.filter(p => isNaN(parseFloat(p)));
-    let displayPrices: string[] = [];
-    if (numericPrices.length > 0) {
-      if (numericPrices.length === 1) displayPrices.push(String(numericPrices[0]));
-      else {
-        const minPrice = numericPrices[0];
-        const maxPrice = numericPrices[numericPrices.length - 1];
-        displayPrices.push(minPrice === maxPrice ? String(minPrice) : `${minPrice} - ${maxPrice}`);
-      }
-      displayPrices = displayPrices.map(p => p + ' 元');
-    }
-    displayPrices.push(...nonNumericPrices);
-    if (displayPrices.length === 0) return '洽詢主辦單位';
-    return displayPrices.join(' / ');
+  // formatPriceDisplay(prices: (number | string)[] | undefined | null): string {
+  //   if (!prices || prices.length === 0) return '洽詢主辦單位';
+  //   const cleanedPrices = prices.map(p => String(p).trim()).filter(p => p && p !== '-' && p !== '');
+  //   if (cleanedPrices.length === 0) return '洽詢主辦單位';
+  //   const numericPrices = cleanedPrices.map(p => parseFloat(p)).filter(n => !isNaN(n)).sort((a, b) => a - b);
+  //   const nonNumericPrices = cleanedPrices.filter(p => isNaN(parseFloat(p)));
+  //   let displayPrices: string[] = [];
+  //   if (numericPrices.length > 0) {
+  //     if (numericPrices.length === 1) displayPrices.push(String(numericPrices[0]));
+  //     else {
+  //       const minPrice = numericPrices[0];
+  //       const maxPrice = numericPrices[numericPrices.length - 1];
+  //       displayPrices.push(minPrice === maxPrice ? String(minPrice) : `${minPrice} - ${maxPrice}`);
+  //     }
+  //     displayPrices = displayPrices.map(p => p + ' 元');
+  //   }
+  //   displayPrices.push(...nonNumericPrices);
+  //   if (displayPrices.length === 0) return '洽詢主辦單位';
+  //   return displayPrices.join(' / ');
+  // }
+
+  formatPriceDisplay(prices: number[] | undefined): string {
+    if (!prices || prices.length === 0 || (prices.length === 1 && prices[0] === -1)) return '洽詢主辦';
+    if (prices.every(p => p === 0)) return '免費或洽詢';
+    return prices.map(p => (p > 0 ? `$${p}` : '洽詢')).join(' / ');
   }
 
   // 修正6: 如果 reloadDataForCity 確實沒有使用，可以安全地移除或註解掉
