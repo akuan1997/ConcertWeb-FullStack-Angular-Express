@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router'; // Params 通常不需
 import { Subject, of } from 'rxjs';
 import { takeUntil, catchError, tap, finalize } from 'rxjs/operators'; // switchMap 可能不需要了
 
-// --- 複用或重新定義接口 (建議放在共享文件中) ---
 export interface Concert {
   _id: string;
   tit: string;
@@ -26,7 +25,6 @@ export interface ApiKeywordSearchResponse {
   page: number;
   totalPages: number;
 }
-// --- 結束接口定義 ---
 
 @Component({
   selector: 'app-keyword-results', // <--- 假設您的選擇器是這個

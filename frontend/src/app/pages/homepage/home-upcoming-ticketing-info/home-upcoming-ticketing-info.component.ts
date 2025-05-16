@@ -4,8 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap, finalize } from 'rxjs/operators';
 
-// 重複使用你先前組件中的介面
-// (請確保它們可以被存取，例如放在共用的模型檔案中或在此處定義)
 export interface Concert {
   _id: string;
   tit: string;

@@ -3,8 +3,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, tap, of, finalize } from 'rxjs';
 
-// Interfaces (Concert, ApiConcertResponse) remain the same
-
 export interface Concert {
   _id: string;
   tit: string;
