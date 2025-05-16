@@ -11,5 +11,5 @@ export const routes: Routes = [
   { path: 'allConcertInfo', component: AllConcertInfoPageComponent },
   { path: 'dateSearch', component: DateSearchPageComponent },
   { path: 'keywordSearch', component: KeywordSearchPageComponent },
-  { path: 'city', component: CityPageComponent },
+  { path: 'citySearch', component: CityPageComponent },
 ];
