@@ -7,7 +7,7 @@
   text-overflow: ellipsis;
   display: block;
   width: 100%;
-  color: #007bff; /* Retained from original potentially, or use Bootstrap default */
+  /*color: #007bff; !* Retained from original potentially, or use Bootstrap default *!*/
 }
 
 .card-subtitle {
@@ -16,19 +16,18 @@
   text-overflow: ellipsis;
   display: block;
   width: 100%;
-  /* color: #6c757d; /* Bootstrap text-muted color */
 }
 
 .card ul li {
   font-size: 0.9rem;
   margin-bottom: 0.3rem;
   display: flex;
-  align-items: baseline; /* Ensures icon, label, and value align nicely */
+  align-items: baseline;
 }
 
 .card ul li strong {
   display: inline-block;
-  min-width: 70px; /* Adjust as needed for "地點:", "日期:", "票價:" */
+  min-width: 120px; /* modify */
   flex-shrink: 0;
   margin-right: 0.5em;
 }
@@ -39,7 +38,7 @@
   text-overflow: ellipsis;
   display: inline-block;
   flex-grow: 1;
-  min-width: 0; /* Important for flex item to shrink and allow ellipsis */
+  min-width: 0;
   vertical-align: baseline;
 }
 
@@ -49,12 +48,12 @@
 }
 
 .card .mt-auto {
-  margin-top: auto; /* Pushes buttons to the bottom of the card body */
+  margin-top: auto;
 }
 
-.bi { /* Bootstrap Icon styling */
+.bi {
   margin-right: 0.3em;
-  vertical-align: text-bottom; /* Or middle, or adjust as preferred */
+  vertical-align: text-bottom;
 }
 
 /* Pagination mobile wrap (from keyword search style) */
