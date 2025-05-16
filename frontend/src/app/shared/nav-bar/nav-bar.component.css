@@ -1,41 +1,35 @@
-/* 針對導覽列中的日期輸入框 */
-.navbar-date-input {
+/* 針對桌面視圖 (通常 md斷點是 768px 以上) */
+@media (min-width: 768px) {
+  .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    /*
+      Bootstrap 5 在 dropdown-menu 上可能會有一些 margin-top 來與 toggle 按鈕隔開。
+      如果懸停時看起來有點奇怪 (例如，選單出現的位置比預期低一點點)，
+      可以嘗試取消這個 margin。
+    */
+    margin-top: 0; /* 可選，視情況調整 */
+  }
+
+  /* 可選：讓下拉箭頭在懸停時也反轉，模擬展開狀態 */
   /*
-    您可以根據實際顯示效果微調此寬度。
-    "yyyy/月/dd" 加上日曆圖示，通常需要 140px 到 160px 左右。
-  */
-  width: 150px;
-  /* 或者使用 min-width，如果希望它在空間不足時能稍微縮小，
-     但 date input 通常不太會這樣。
-     min-width: 140px;
+  .navbar-nav .nav-item.dropdown:hover .dropdown-toggle::after {
+    transform: rotate(180deg);
+  }
   */
 }
 
-/* 確保在小螢幕堆疊時，日期相關元素有上下間距 */
-@media (max-width: 767.98px) { /* Bootstrap的md斷點是768px */
-  .navbar-date-filter-group,
-  .navbar-date-input,
-  .navbar-date-label,
-  .city_date_button_nav_style { /* 給搜尋按鈕一個統一樣式名 */
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-  .navbar-date-filter-group:first-of-type, /* 第一個日期群組的上間距取消，如果它緊跟著其他元素 */
-  .navbar-nav + .navbar-date-filter-group .navbar-date-label, /* 如果日期標籤緊跟著 nav-ul */
-  .navbar-nav + .navbar-date-filter-group .navbar-date-input {
-    margin-top: 0;
-  }
-  /* 在小屏幕上，讓輸入框和按鈕佔滿一些寬度，避免太窄 */
-  .navbar-date-input, .city_date_button_nav_style {
-    width: auto; /* 或者 width: 100% 如果父容器允許 */
-    flex-grow: 1; /* 如果在 flex 容器中 */
-  }
-  .navbar-date-filter-item-group { /* 新增的包裹label和input的群組 */
-    display: flex;
-    align-items: center;
-    width: 100%; /* 讓label和input在小螢幕橫向排列時佔滿寬度 */
-  }
-  .navbar-date-filter-item-group .navbar-date-input {
-    flex-grow: 1; /* 讓input填滿剩餘空間 */
-  }
+/*
+  為什麼要用 @media query?
+  因為在移動裝置上，懸停 (hover) 的體驗通常不好，點擊觸發是比較好的方式。
+  所以我們只在較大螢幕上啟用懸停展開。
+  Bootstrap 的 navbar-expand-md 表示在 md 斷點以上 navbar 才會展開，
+  所以我們的懸停邏輯也最好跟著這個斷點。
+*/
+
+/* 如果你的下拉選單項目文字在某些情況下會換行，導致選單寬度不足，可以加上這個 */
+/*
+.dropdown-menu {
+  min-width: max-content;
 }
+*/
+

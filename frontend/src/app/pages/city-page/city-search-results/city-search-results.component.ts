@@ -40,7 +40,7 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
 
-  private apiUrl = 'http://localhost:3000/api/gitCitySelectionData';
+  private apiUrl = 'http://localhost:3000/api/getCitySelectionData';
 
   ngOnInit(): void {
     this.routeSubscription = this.route.queryParams.pipe(
