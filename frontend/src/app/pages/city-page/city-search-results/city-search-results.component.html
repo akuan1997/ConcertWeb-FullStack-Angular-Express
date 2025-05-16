@@ -1,1 +1,48 @@
-<p>city-search-results works!</p>
+<div class="container mt-4">
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">載入中...</span>
+    </div>
+    <p>正在載入 {{ currentCity ? currentCity + ' 的' : '' }}演唱會資訊...</p>
+  </div>
+
+  <div *ngIf="!isLoading && error" class="alert alert-warning" role="alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!isLoading && !error">
+    <h2 *ngIf="currentCity" class="mb-3">
+      {{ currentCity }} 的演唱會結果 ({{ nbHits }} 筆)
+    </h2>
+
+    <div *ngIf="concerts.length > 0; else noResults" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div *ngFor="let concert of concerts" class="col">
+        <div class="card h-100 shadow-sm">
+          <img [src]="getPinImageUrl(concert.pin)" class="card-img-top" [alt]="concert.tit" style="object-fit: cover; height: 200px;">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ concert.tit }}</h5>
+            <p class="card-text">
+              <strong><i class="bi bi-geo-alt-fill"></i> 地點:</strong> {{ concert.loc.join(', ') }} <br>
+              <strong><i class="bi bi-calendar-event-fill"></i> 日期:</strong> {{ concert.sdt.join(' / ') }} <br>
+              <ng-container *ngIf="concert.prc && concert.prc.length > 0">
+                <strong><i class="bi bi-tags-fill"></i> 票價:</strong> {{ concert.prc.join(' - ') }} 元
+              </ng-container>
+            </p>
+            <div class="mt-auto">
+              <a *ngIf="concert.web" [href]="concert.web" target="_blank" class="btn btn-primary btn-sm me-2">官方網站</a>
+              <a *ngIf="concert.url" [href]="concert.url" target="_blank" class="btn btn-info btn-sm">更多資訊</a>
+            </div>
+          </div>
+          <div class="card-footer text-muted">
+            <small>最後更新: {{ concert.tim | date:'yyyy/MM/dd HH:mm' }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noResults>
+      <!-- 這個訊息在 error 處理中已涵蓋，但可以保留作為備用 -->
+      <!-- <p *ngIf="currentCity">在 {{ currentCity }} 沒有找到相關的演唱會資訊。</p> -->
+    </ng-template>
+  </div>
+</div>

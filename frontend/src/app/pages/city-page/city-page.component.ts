@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { HeroSectionComponent } from '../../shared/hero-section/hero-section.component';
-import { AboutComponent } from '../../shared/about/about.component';
 import { CitySearchResultsComponent } from './city-search-results/city-search-results.component';
+import { AboutComponent } from '../../shared/about/about.component';
 
 @Component({
   selector: 'app-city-page',

@@ -1,0 +1,17 @@
+.card-img-top {
+  border-bottom: 1px solid #eee;
+}
+
+.card-title {
+  color: #007bff; /* Bootstrap primary color */
+}
+
+.card-text strong {
+  margin-right: 5px;
+}
+
+.card-footer small {
+  font-size: 0.8em;
+}
+
+/* 可以添加更多自訂樣式 */

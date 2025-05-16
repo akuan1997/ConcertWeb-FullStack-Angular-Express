@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms'; // <--- 導入 FormsModule
   standalone: true,
   imports: [
     RouterLink,
-    FormsModule // <--- 添加 FormsModule 到 imports
+    FormsModule
   ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
