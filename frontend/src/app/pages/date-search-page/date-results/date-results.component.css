@@ -1,31 +1,4 @@
-/*!* date-results.component.css - Add any specific styles here *!*/
-/*!* Or copy from city-search-results.component.css if applicable *!*/
-
-/*.truncate-list-item-value {*/
-/*  display: -webkit-box;*/
-/*  -webkit-line-clamp: 2; !* Adjust number of lines before truncating *!*/
-/*  -webkit-box-orient: vertical;*/
-/*  overflow: hidden;*/
-/*  text-overflow: ellipsis;*/
-/*  word-break: break-all; !* Can help with long unbroken strings *!*/
-/*  max-height: 3.2em; !* Approx 2 lines height, adjust based on line-height *!*/
-/*  line-height: 1.6em; !* Adjust based on font size *!*/
-/*}*/
-
-/*!* For pagination to wrap on smaller screens *!*/
-/*.pagination-mobile-wrap {*/
-/*  flex-wrap: wrap;*/
-/*  justify-content: center; !* Center items when they wrap *!*/
-/*}*/
-/*.pagination-mobile-wrap .page-item {*/
-/*  margin-bottom: 0.25rem; !* Add some space when items wrap *!*/
-/*}*/
-
-/*!* You might want to style the header specifically *!*/
-/*.date-results-container h2 .fs-5 {*/
-/*  color: #555; !* Example: slightly different color for sub-info *!*/
-/*}*/
-/* Styles adapted for city concert list, based on keyword search style */
+/* Styles adapted for date results, similar to city/all concert lists */
 
 .card-title {
   font-weight: bold;
@@ -34,7 +7,6 @@
   text-overflow: ellipsis;
   display: block;
   width: 100%;
-  /*color: #007bff; !* Retained from original potentially, or use Bootstrap default *!*/
 }
 
 .card-subtitle {
@@ -54,7 +26,7 @@
 
 .card ul li strong {
   display: inline-block;
-  min-width: 120px; /* modify */
+  min-width: 120px;
   flex-shrink: 0;
   margin-right: 0.5em;
 }
@@ -83,32 +55,46 @@
   vertical-align: text-bottom;
 }
 
-/* Pagination mobile wrap (from keyword search style) */
+.btn .spinner-border-sm {
+  vertical-align: middle;
+}
+
+/* Pagination mobile wrap */
 @media (max-width: 767.98px) {
   .pagination-mobile-wrap {
     flex-wrap: wrap;
     justify-content: center;
   }
+  /* Optional: Spacing for wrapped pagination items */
+  /* .pagination-mobile-wrap .page-item {
+    margin-bottom: 0.25rem;
+  } */
 }
 
-/* Styles from original that might still be relevant or are overridden */
-/* .card-img-top was removed */
-/* .card-text strong was replaced by .card ul li strong */
-/* .card-footer small was removed */
+/* --- NEW or COPIED: Header styles for Title and Switcher --- */
+@media (min-width: 768px) { /* md breakpoint and up */
+  .header-row {
+    /* Parent of header-title and header-switcher */
+  }
 
-/* Header styles (from keyword search) - these might need adjustment
-   if your city display header is different from keyword search header */
-@media (min-width: 768px) {
-  /* .header-row { ... } */ /* If you have a specific header row structure */
-  .header-title { /* This was for a centered title, may not apply directly */
-    /* position: absolute;
+  .header-title {
+    position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: auto; */
+    width: auto;
   }
-  /* .header-switcher { margin-left: auto; } */
-  /* .header-title h2.mb-md-0 { margin-bottom: 0 !important; } */
-}
+  .header-title h2.py-md-3 {
+    margin-bottom: 0 !important;
+  }
 
-/* Add any other custom styles you need */
+  .header-switcher {
+    margin-left: auto; /* Pushes switcher to the right */
+  }
+}
+/* --- End Header styles --- */
+
+/* Specific to date-results if needed, e.g., title formatting */
+/* .date-results-container h2 .fs-5 {
+  color: #555;
+} */
