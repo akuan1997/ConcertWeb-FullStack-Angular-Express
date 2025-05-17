@@ -1,19 +1,20 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router'; // RouterLink 被引用但可能未使用
+import { CommonModule } from '@angular/common'; // DatePipe removed if not used directly for formatting
+import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
-// 修正1：導入 Observable
-import { Subscription, of, Observable } from 'rxjs'; // <--- 加入 Observable
-// 修正7：移除未使用的 finalize (如果確定不再需要)
-import { switchMap, catchError, tap } from 'rxjs/operators'; // finalize,
+import { Subscription, of, Observable, finalize } from 'rxjs'; // Added finalize
+import { switchMap, catchError, tap } from 'rxjs/operators';
 import { Concert } from '../../../shared/models/concert.model';
 
 export interface ApiConcertResponse {
   data: Concert[];
   nbHits: number;
-  page?: number;
-  totalPages?: number;
+  page?: number; // API might send this
+  totalPages?: number; // API might send this
 }
+
+// --- NEW: Define DisplayMode type ---
+export type DisplayMode = 'loadMore' | 'pagination';
 
 @Component({
   selector: 'app-city-search-results',
@@ -30,9 +31,15 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
   currentCity: string | null = null;
 
-  currentPage: number = 1;
+  // --- MODIFIED/NEW: State for display modes and loading ---
+  displayMode: DisplayMode = 'loadMore'; // Default mode
+  isLoadingMore: boolean = false;        // For "Load More" button
+  allDataLoaded: boolean = false;        // For "Load More" mode
+
+  currentPage: number = 0; // For loadMore: last loaded page. For pagination: current active page.
+                           // Will be 0 before first loadMore, 1 for first page in pagination.
   totalPages: number = 0;
-  itemsPerPage: number = 30;
+  itemsPerPage: number = 30; // Consistent with your existing itemsPerPage
   paginationPages: number[] = [];
   totalItems: number = 0;
 
@@ -45,92 +52,171 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.routeSubscription = this.route.queryParams.pipe(
       tap(params => {
+        const cityChanged = this.currentCity !== params['cit'];
         this.currentCity = params['cit'] || null;
-        this.currentPage = 1;
-        this.resetStateBeforeFetch();
-        console.log('City from query params:', this.currentCity, 'Page reset to 1');
+        if (cityChanged) { // If city changed, reset fully for the new mode/city
+          this.loadInitialDataForCity();
+        } else if (!this.searchResults.length && this.currentCity) { // Initial load for a city
+          this.loadInitialDataForCity();
+        }
       }),
-      switchMap(params => {
-        const city = params['cit'];
-        return this.fetchData(city, this.currentPage);
-      })
-    ).subscribe(
-      // 修正2: 為 subscribe 的 next 回調的參數添加類型
-      (response: ApiConcertResponse) => this.handleApiResponse(response)
-    );
+      // We will call fetchConcerts directly from loadInitialDataForCity or goToPage
+      // So, we don't need switchMap here to directly fetch.
+      // The tap above is enough to trigger re-initialization if city changes.
+    ).subscribe();
+
+    // If queryParams are already present on init (e.g. direct navigation with params)
+    const initialCity = this.route.snapshot.queryParams['cit'];
+    if (initialCity && !this.currentCity) { // Ensure it runs if not caught by subscription immediately
+      this.currentCity = initialCity;
+      this.loadInitialDataForCity();
+    } else if (!initialCity && !this.searchResults.length && !this.errorMessage) {
+      this.errorMessage = '請從上方選單選擇一個城市。'; // Handle case where no city is selected initially
+    }
   }
 
-  private resetStateBeforeFetch(): void {
-    this.isLoading = true;
-    this.errorMessage = null;
-    this.searchResults = [];
-    this.totalPages = 0;
-    this.totalItems = 0;
-    this.paginationPages = [];
-  }
-
-  // 修正3: fetchData 返回類型明確指定為 Observable<ApiConcertResponse>
-  private fetchData(city: string | null, page: number): Observable<ApiConcertResponse> {
-    if (!city) {
+  // --- NEW: Initialize data loading based on city and current mode ---
+  loadInitialDataForCity(): void {
+    if (!this.currentCity) {
       this.errorMessage = '請從上方選單選擇一個城市。';
       this.isLoading = false;
-      return of({ data: [], nbHits: 0, page: 1, totalPages: 0 });
+      return;
+    }
+    this.searchResults = [];
+    this.allDataLoaded = false;
+    this.totalPages = 0;
+    this.totalItems = 0;
+    // For 'loadMore', page starts at 0 to fetch page 1. For 'pagination', it starts at 1.
+    this.currentPage = (this.displayMode === 'loadMore') ? 0 : 1;
+    this.fetchConcerts(); // Call the main fetching logic
+  }
+
+  // --- MODIFIED: Renamed fetchData to fetchConcerts, and adapted for modes ---
+  fetchConcerts(pageToFetch?: number): void { // pageToFetch is for pagination mode
+    if (!this.currentCity) {
+      this.errorMessage = '未選擇城市，無法載入資料。';
+      this.isLoading = false; // Ensure loading is false if no city
+      this.isLoadingMore = false;
+      return;
     }
 
-    this.isLoading = true;
+    if (this.displayMode === 'loadMore' && this.allDataLoaded && pageToFetch === undefined) {
+      console.log('Load More: All data already loaded for', this.currentCity);
+      return;
+    }
+    if (this.isLoading || (this.displayMode === 'loadMore' && this.isLoadingMore)) {
+      console.log('Already loading data for', this.currentCity);
+      return;
+    }
+
+    if (this.displayMode === 'loadMore' && pageToFetch === undefined) {
+      this.isLoadingMore = true;
+    } else {
+      this.isLoading = true;
+    }
     this.errorMessage = null;
 
+    let targetPage: number;
+    if (this.displayMode === 'pagination' && pageToFetch !== undefined) {
+      targetPage = pageToFetch;
+    } else { // loadMore or initial load for pagination
+      targetPage = this.currentPage + 1; // For loadMore, currentPage is last loaded page (0 initially)
+      // For pagination initial, currentPage is 1, targetPage is 1 (handled by pageToFetch)
+      // If pagination initial and pageToFetch is undefined, targetPage=1
+      if (this.displayMode === 'pagination' && this.currentPage === 0 && pageToFetch === undefined) targetPage = 1;
+    }
+
+
+    if (this.totalPages > 0 && targetPage > this.totalPages) {
+      console.warn(`Attempted to fetch page ${targetPage} but total pages is ${this.totalPages} for ${this.currentCity}`);
+      this.isLoading = false;
+      this.isLoadingMore = false;
+      if (this.displayMode === 'loadMore') this.allDataLoaded = true; // Mark as loaded if tried to go past
+      return;
+    }
+    if (this.displayMode === 'pagination' && targetPage < 1) {
+      console.warn(`Attempted to fetch invalid page ${targetPage} for ${this.currentCity}`);
+      this.isLoading = false;
+      this.isLoadingMore = false;
+      return;
+    }
+
     const httpParams = new HttpParams()
-      .set('cit', city)
-      .set('page', page.toString())
+      .set('cit', this.currentCity)
+      .set('page', targetPage.toString())
       .set('limit', this.itemsPerPage.toString());
 
-    return this.http.get<ApiConcertResponse>(this.apiUrl, { params: httpParams }).pipe(
+    this.http.get<ApiConcertResponse>(this.apiUrl, { params: httpParams }).pipe(
+      tap(response => this.handleApiResponse(response, targetPage)), // Pass targetPage to know what was fetched
       catchError(err => {
-        console.error(`API Error fetching city ${city}, page ${page}:`, err);
-        this.errorMessage = `無法載入 ${city} 的演唱會資訊，請稍後再試。`;
-        return of({ data: [], nbHits: 0, page , totalPages: 0 });
+        console.error(`API Error fetching city ${this.currentCity}, page ${targetPage}:`, err);
+        this.errorMessage = `無法載入 ${this.currentCity} 的演唱會資訊：${err.message || '請稍後再試'}`;
+        if (this.displayMode === 'loadMore') this.allDataLoaded = true; // Prevent further load more attempts on error
+        return of({ data: [], nbHits: this.totalItems, page: targetPage, totalPages: this.totalPages }); // Return current state on error
+      }),
+      finalize(() => {
+        this.isLoading = false;
+        this.isLoadingMore = false;
       })
-    );
+    ).subscribe();
   }
 
-  // 修正4: handleApiResponse 參數 'response' 添加類型
-  private handleApiResponse(response: ApiConcertResponse): void {
-    this.searchResults = response.data;
-    this.totalItems = response.nbHits;
+  // --- MODIFIED: handleApiResponse adapted for modes ---
+  private handleApiResponse(response: ApiConcertResponse, fetchedPage: number): void {
+    if (response && response.data) {
+      this.totalItems = response.nbHits;
+      this.totalPages = response.totalPages !== undefined
+        ? response.totalPages
+        : Math.ceil(this.totalItems / this.itemsPerPage);
 
-    this.totalPages = response.totalPages !== undefined
-      ? response.totalPages
-      : Math.ceil(this.totalItems / this.itemsPerPage);
+      if (this.displayMode === 'loadMore') {
+        this.searchResults = [...this.searchResults, ...response.data];
+        this.currentPage = fetchedPage; // Update current page to the one just fetched
+        if (this.currentPage >= this.totalPages || response.data.length < this.itemsPerPage || response.data.length === 0) {
+          this.allDataLoaded = true;
+        }
+      } else { // Pagination mode
+        this.searchResults = response.data;
+        this.currentPage = fetchedPage;
+      }
 
-    this.currentPage = response.page !== undefined
-      ? response.page
-      : this.currentPage;
-
-    this.calculatePaginationPages();
-    this.isLoading = false;
-
-    if (this.currentCity && response.data.length === 0 && this.currentPage === 1 && !this.errorMessage) {
-      this.errorMessage = `在 ${this.currentCity} 沒有找到相關的演唱會資訊。`;
-    } else if (response.data.length === 0 && this.currentPage > 1 && !this.errorMessage) {
-      console.log(`在 ${this.currentCity} 的第 ${this.currentPage} 頁沒有更多數據了。`);
+      if (this.currentCity && this.searchResults.length === 0 && !this.errorMessage) {
+        if (this.displayMode === 'loadMore' && this.allDataLoaded) {
+          // This is fine, just means no results found initially or after loading all
+        } else if (this.displayMode === 'pagination' && this.currentPage === 1) {
+          // Message handled by template based on searchResults.length
+        }
+      }
+      this.calculatePaginationPages(); // Update pagination UI if in pagination mode
+    } else {
+      console.warn('API response missing data or unexpected format for city', this.currentCity, response);
+      if (this.searchResults.length === 0) { // Only set error if no data is currently shown
+        this.errorMessage = '從伺服器獲取到的資料格式不正確。';
+      }
+      if (this.displayMode === 'loadMore') this.allDataLoaded = true; // Assume all loaded if bad response
     }
-    console.log('Handled API response. Results:', this.searchResults.length, 'Total Items:', this.totalItems, 'Total Pages:', this.totalPages, 'Current Page:', this.currentPage);
   }
 
+  // --- NEW: Method to switch display mode ---
+  setDisplayMode(mode: DisplayMode): void {
+    if (this.displayMode === mode || this.isLoading || this.isLoadingMore) return; // No change or busy
+    this.displayMode = mode;
+    // Important: Reset and reload data for the new mode
+    this.loadInitialDataForCity();
+  }
 
+  // --- MODIFIED: goToPage for pagination mode ---
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages && page !== this.currentPage && !this.isLoading) {
-      this.isLoading = true;
-      this.currentPage = page;
-      this.fetchData(this.currentCity, this.currentPage)
-        .subscribe(
-          // 修正5: 為 subscribe 的 next 回調的參數添加類型
-          (response: ApiConcertResponse) => this.handleApiResponse(response)
-        );
+    if (this.displayMode !== 'pagination' || this.isLoading) {
+      return;
+    }
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      // this.currentPage = page; // currentPage will be updated in handleApiResponse
+      this.fetchConcerts(page); // Fetch specific page for pagination
     }
   }
 
+  // calculatePaginationPages remains the same
   calculatePaginationPages(): void {
     if (this.totalPages === 0) {
       this.paginationPages = [];
@@ -153,6 +239,7 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
     this.paginationPages = Array.from({ length: (endPage - startPage) + 1 }, (_, i) => startPage + i);
   }
 
+  // formatArrayDisplay and formatPriceDisplay remain the same
   formatArrayDisplay(arr: string[] | undefined | null, separator: string = '、'): string {
     if (!arr || arr.length === 0) return '未提供';
     const filteredArr = arr.filter(item => item && item.trim() !== '' && item.trim() !== '-');
@@ -160,45 +247,11 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
     return filteredArr.join(separator);
   }
 
-  // formatPriceDisplay(prices: (number | string)[] | undefined | null): string {
-  //   if (!prices || prices.length === 0) return '洽詢主辦單位';
-  //   const cleanedPrices = prices.map(p => String(p).trim()).filter(p => p && p !== '-' && p !== '');
-  //   if (cleanedPrices.length === 0) return '洽詢主辦單位';
-  //   const numericPrices = cleanedPrices.map(p => parseFloat(p)).filter(n => !isNaN(n)).sort((a, b) => a - b);
-  //   const nonNumericPrices = cleanedPrices.filter(p => isNaN(parseFloat(p)));
-  //   let displayPrices: string[] = [];
-  //   if (numericPrices.length > 0) {
-  //     if (numericPrices.length === 1) displayPrices.push(String(numericPrices[0]));
-  //     else {
-  //       const minPrice = numericPrices[0];
-  //       const maxPrice = numericPrices[numericPrices.length - 1];
-  //       displayPrices.push(minPrice === maxPrice ? String(minPrice) : `${minPrice} - ${maxPrice}`);
-  //     }
-  //     displayPrices = displayPrices.map(p => p + ' 元');
-  //   }
-  //   displayPrices.push(...nonNumericPrices);
-  //   if (displayPrices.length === 0) return '洽詢主辦單位';
-  //   return displayPrices.join(' / ');
-  // }
-
   formatPriceDisplay(prices: number[] | undefined): string {
     if (!prices || prices.length === 0 || (prices.length === 1 && prices[0] === -1)) return '洽詢主辦';
     if (prices.every(p => p === 0)) return '免費或洽詢';
     return prices.map(p => (p > 0 ? `$${p}` : '洽詢')).join(' / ');
   }
-
-  // 修正6: 如果 reloadDataForCity 確實沒有使用，可以安全地移除或註解掉
-  // reloadDataForCity(): void {
-  //   if (this.currentCity) {
-  //     this.isLoading = true;
-  //     this.fetchData(this.currentCity, this.currentPage)
-  //         .subscribe(
-  //            (response: ApiConcertResponse) => this.handleApiResponse(response)
-  //         );
-  //   } else {
-  //     this.errorMessage = "無法重試：未指定城市。";
-  //   }
-  // }
 
   ngOnDestroy(): void {
     if (this.routeSubscription) {

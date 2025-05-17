@@ -1,4 +1,4 @@
-/* Styles adapted for city concert list, based on keyword search style */
+/* ... (Your existing styles for card, card-title, etc.) ... */
 
 .card-title {
   font-weight: bold;
@@ -7,7 +7,6 @@
   text-overflow: ellipsis;
   display: block;
   width: 100%;
-  /*color: #007bff; !* Retained from original potentially, or use Bootstrap default *!*/
 }
 
 .card-subtitle {
@@ -27,7 +26,7 @@
 
 .card ul li strong {
   display: inline-block;
-  min-width: 120px; /* modify */
+  min-width: 120px;
   flex-shrink: 0;
   margin-right: 0.5em;
 }
@@ -53,10 +52,14 @@
 
 .bi {
   margin-right: 0.3em;
-  vertical-align: text-bottom;
+  vertical-align: text-bottom; /* Or text-middle depending on desired alignment */
 }
 
-/* Pagination mobile wrap (from keyword search style) */
+.btn .spinner-border-sm {
+  vertical-align: middle;
+}
+
+/* Pagination mobile wrap (already present, good) */
 @media (max-width: 767.98px) {
   .pagination-mobile-wrap {
     flex-wrap: wrap;
@@ -64,24 +67,28 @@
   }
 }
 
-/* Styles from original that might still be relevant or are overridden */
-/* .card-img-top was removed */
-/* .card-text strong was replaced by .card ul li strong */
-/* .card-footer small was removed */
+/* --- NEW or COPIED: Header styles for Title and Switcher --- */
+@media (min-width: 768px) { /* md breakpoint and up */
+  .header-row {
+    /* This class is on the parent of header-title and header-switcher */
+    /* flex-md-row align-items-md-center ensures vertical alignment */
+  }
 
-/* Header styles (from keyword search) - these might need adjustment
-   if your city display header is different from keyword search header */
-@media (min-width: 768px) {
-  /* .header-row { ... } */ /* If you have a specific header row structure */
-  .header-title { /* This was for a centered title, may not apply directly */
-    /* position: absolute;
+  .header-title {
+    /* For md and up, we position it absolutely */
+    position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: auto; */
+    width: auto; /* Allow it to size based on content */
   }
-  /* .header-switcher { margin-left: auto; } */
-  /* .header-title h2.mb-md-0 { margin-bottom: 0 !important; } */
-}
+  .header-title h2.py-md-3 { /* Ensure heading inside also has appropriate margin/padding */
+    margin-bottom: 0 !important;
+  }
 
-/* Add any other custom styles you need */
+  .header-switcher {
+    /* This pushes the switcher to the far right */
+    margin-left: auto;
+  }
+}
+/* --- End Header styles --- */
