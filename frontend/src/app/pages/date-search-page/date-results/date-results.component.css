@@ -1,0 +1,27 @@
+/* date-results.component.css - Add any specific styles here */
+/* Or copy from city-search-results.component.css if applicable */
+
+.truncate-list-item-value {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Adjust number of lines before truncating */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all; /* Can help with long unbroken strings */
+  max-height: 3.2em; /* Approx 2 lines height, adjust based on line-height */
+  line-height: 1.6em; /* Adjust based on font size */
+}
+
+/* For pagination to wrap on smaller screens */
+.pagination-mobile-wrap {
+  flex-wrap: wrap;
+  justify-content: center; /* Center items when they wrap */
+}
+.pagination-mobile-wrap .page-item {
+  margin-bottom: 0.25rem; /* Add some space when items wrap */
+}
+
+/* You might want to style the header specifically */
+.date-results-container h2 .fs-5 {
+  color: #555; /* Example: slightly different color for sub-info */
+}

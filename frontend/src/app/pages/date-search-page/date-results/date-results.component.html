@@ -1,1 +1,131 @@
-<p>date-results works!</p>
+<div class="date-results-container container mt-4">
+  <!-- Header: Display Date Range -->
+  <div class="text-center pb-3">
+    <h2 *ngIf="!isLoading && !errorMessage" class="fw-bold">
+      <i class="bi bi-calendar-range me-2"></i>
+      日期搜尋結果
+      <span *ngIf="displayStartDate || displayEndDate" class="fs-5 fw-normal">
+        ( {{ displayStartDate || '從頭' }} - {{ displayEndDate || '至今' }} )
+      </span>
+      <span *ngIf="totalItems > 0" class="fs-5 fw-normal ms-2">
+        - 共 {{ totalItems }} 筆
+      </span>
+    </h2>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">載入中...</span>
+    </div>
+    <p class="mt-2">正在載入指定日期的演唱會資訊...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+    <!-- Optional: Add a button to go back or try a new search -->
+    <!-- <button [routerLink]="['/']" class="btn btn-sm btn-secondary ms-3">返回首頁</button> -->
+  </div>
+
+  <!-- Results Display -->
+  <div *ngIf="!isLoading && !errorMessage && searchResults.length > 0">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div *ngFor="let concert of searchResults" class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <div class="text-center">
+              <h5 class="card-title">{{ concert.tit }}</h5>
+              <!-- Display city if available, as it's still relevant info -->
+              <h6 class="card-subtitle my-3 text-muted fw-bold">{{ concert.cit && concert.cit.trim() !== '-' ? concert.cit : '未提供城市' }}</h6>
+            </div>
+            <ul class="list-unstyled flex-grow-1">
+              <li>
+                <strong><i class="bi bi-calendar-event"></i> 活動日期:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.pdt, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-ticket-perforated"></i> 售票時間:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.sdt, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-geo-alt"></i> 地點:</strong>
+                <span class="truncate-list-item-value">{{ formatArrayDisplay(concert.loc, '、') }}</span>
+              </li>
+              <li>
+                <strong><i class="bi bi-cash-coin"></i> 票價:</strong>
+                <span class="truncate-list-item-value">{{ formatPriceDisplay(concert.prc) }}</span>
+              </li>
+            </ul>
+            <div class="mt-auto text-center">
+              <a *ngIf="concert.url" [href]="concert.url" target="_blank" class="btn btn-primary btn-sm me-2">
+                <i class="bi bi-link-45deg"></i> 活動/售票連結
+              </a>
+              <p *ngIf="!concert.url && !concert.web" class="text-muted small mt-2">無相關連結</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results Message (already handled by errorMessage for initial load, but good for clarity if needed) -->
+  <div *ngIf="!isLoading && !errorMessage && searchResults.length === 0 && (startDateQuery || endDateQuery)">
+    <p class="text-center text-muted mt-4">
+      在指定的日期範圍內 ({{ displayStartDate || '未指定開始' }} - {{ displayEndDate || '未指定結束' }}) 沒有找到相關的演唱會資訊。
+    </p>
+  </div>
+
+
+  <!-- Pagination Controls (Identical to CitySearchResultsComponent) -->
+  <nav *ngIf="!isLoading && !errorMessage && totalPages > 1 && searchResults.length > 0"
+       aria-label="Search results navigation"
+       class="mt-4 d-flex justify-content-center">
+    <ul class="pagination pagination-mobile-wrap">
+      <!-- Previous Button -->
+      <li class="page-item" [class.disabled]="currentPage === 1 || isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage - 1)" aria-label="Previous">
+          <span aria-hidden="true">«</span>
+        </a>
+      </li>
+
+      <!-- First page and ellipsis -->
+      <li *ngIf="paginationPages[0] > 1" class="page-item" [class.disabled]="isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(1)">1</a>
+      </li>
+      <li *ngIf="paginationPages[0] > 2" class="page-item disabled">
+        <span class="page-link">…</span>
+      </li>
+
+      <!-- Page Numbers -->
+      <li
+        *ngFor="let pageNum of paginationPages"
+        class="page-item"
+        [class.active]="pageNum === currentPage"
+        [class.disabled]="isLoading"
+      >
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(pageNum)">{{ pageNum }}</a>
+      </li>
+
+      <!-- Ellipsis and Last page -->
+      <li *ngIf="paginationPages[paginationPages.length - 1] < totalPages - 1" class="page-item disabled">
+        <span class="page-link">…</span>
+      </li>
+      <li *ngIf="paginationPages[paginationPages.length - 1] < totalPages" class="page-item" [class.disabled]="isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(totalPages)">{{ totalPages }}</a>
+      </li>
+
+      <!-- Next Button -->
+      <li class="page-item" [class.disabled]="currentPage === totalPages || isLoading">
+        <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage + 1)" aria-label="Next">
+          <span aria-hidden="true">»</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div *ngIf="!isLoading && !errorMessage && totalPages > 0 && searchResults.length > 0" class="text-center mt-2">
+    <small>第 {{ currentPage }} 頁 / 共 {{ totalPages }} 頁 (本頁顯示 {{ searchResults.length }} 筆)</small>
+  </div>
+
+  <hr *ngIf="!isLoading && !errorMessage && (startDateQuery || endDateQuery)" class="my-4">
+</div>
