@@ -1,7 +1,6 @@
-/* src/app/pages/all-concert-info/all-concert-info.component.css */
+/* src/app/pages/keyword-results/keyword-results.component.css */
 
-/* ... (你現有的 .card-title, .card-subtitle, .header-title 等樣式保持不變) ... */
-
+/* Card and general list item styles (copied from other components) */
 .card-title {
   font-weight: bold;
   white-space: nowrap;
@@ -61,9 +60,10 @@
   vertical-align: middle;
 }
 
-/* --- 之前新增或修改的 Header 樣式 --- */
-@media (min-width: 768px) {
+/* Header styles for Title and Switcher (copied from other components) */
+@media (min-width: 768px) { /* md breakpoint and up */
   .header-row {
+    /* Parent of header-title and header-switcher */
   }
 
   .header-title {
@@ -73,27 +73,24 @@
     transform: translate(-50%, -50%);
     width: auto;
   }
-
-  .header-switcher {
-    margin-left: auto;
-  }
-  .header-title h2.mb-md-0 {
+  .header-title h2.py-md-3,
+  .header-title h2.mb-md-0 { /* Ensure consistency */
     margin-bottom: 0 !important;
   }
-}
-/* --- 結束 Header 樣式 --- */
 
-
-/* --- 新增：手機版分頁樣式 --- */
-@media (max-width: 767.98px) { /* 針對小於 Bootstrap 'md' 斷點的螢幕 (即 sm 和 xs) */
-  .pagination-mobile-wrap {
-    flex-wrap: wrap;         /* 允許分頁項目換行 */
-    justify-content: center; /* 當項目換行後，讓每一行的項目也居中顯示 */
+  .header-switcher {
+    margin-left: auto; /* Pushes switcher to the right */
   }
-
-  /* 可選：如果換行後的項目之間垂直間距太小，可以稍微調整 */
-  /* .pagination-mobile-wrap .page-item {
-    margin-bottom: 0.25rem; /* 增加一點底邊距 */
-  /* } */
 }
-/* --- 結束手機版分頁樣式 --- */
+
+/* Mobile pagination wrap (copied from other components) */
+@media (max-width: 767.98px) {
+  .pagination-mobile-wrap {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  /* Optional: Spacing for wrapped pagination items */
+  /* .pagination-mobile-wrap .page-item {
+    margin-bottom: 0.25rem;
+  } */
+}

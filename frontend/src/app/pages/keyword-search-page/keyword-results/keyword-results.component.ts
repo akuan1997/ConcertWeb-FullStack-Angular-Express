@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router'; // Params 通常不需要直接導入
-import { Subject, of } from 'rxjs';
-import { takeUntil, catchError, tap, finalize } from 'rxjs/operators'; // switchMap 可能不需要了
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, of, Observable } from 'rxjs';
+import { takeUntil, catchError, tap, finalize, distinctUntilChanged, map } from 'rxjs/operators';
 import { Concert } from '../../../shared/models/concert.model';
 
 export interface ApiKeywordSearchResponse {
@@ -13,15 +13,17 @@ export interface ApiKeywordSearchResponse {
   nbHits: number;
 }
 
+export type DisplayMode = 'loadMore' | 'pagination';
+
 @Component({
-  selector: 'app-keyword-results', // <--- 假設您的選擇器是這個
+  selector: 'app-keyword-results',
   standalone: true,
   imports: [CommonModule],
   providers: [DatePipe],
-  templateUrl: './keyword-results.component.html', // <--- 假設 HTML 文件名
-  styleUrls: ['./keyword-results.component.css']   // <--- 假設 CSS 文件名
+  templateUrl: './keyword-results.component.html',
+  styleUrls: ['./keyword-results.component.css']
 })
-export class KeywordResultsComponent implements OnInit, OnDestroy { // <--- 假設類名是這個
+export class KeywordResultsComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -32,139 +34,182 @@ export class KeywordResultsComponent implements OnInit, OnDestroy { // <--- 假�
   errorMessage: string | null = null;
   currentSearchText: string | null = null;
 
-  currentPage: number = 1;
+  displayMode: DisplayMode = 'loadMore';
+  isLoadingMore: boolean = false;
+  allDataLoaded: boolean = false;
+
+  currentPage: number = 0;
   totalPages: number = 0;
   itemsPerPage: number = 30;
   totalItems: number = 0;
+  // paginationPages: number[] = []; // <--- REMOVE THIS LINE
 
   private destroy$ = new Subject<void>();
-
   private apiUrl = 'http://localhost:3000/api/getKeywordSearchData';
 
   ngOnInit(): void {
     this.route.queryParams
       .pipe(
         takeUntil(this.destroy$),
+        map(params => ({ text: params['text'] })),
+        distinctUntilChanged((prev, curr) => prev.text === curr.text),
         tap(params => {
-          const searchText = params['text'];
-          const pageParam = params['page']; // 獲取 page 參數
-
+          const searchText = params.text;
           if (searchText && searchText !== this.currentSearchText) {
-            // 搜尋詞變化
             this.currentSearchText = searchText;
-            this.currentPage = pageParam ? parseInt(pageParam, 10) : 1; // 如果有 page 參數，使用它
-            this.searchResults = [];
-            this.totalPages = 0;
-            this.fetchSearchResults();
-          } else if (searchText && searchText === this.currentSearchText && pageParam) {
-            // 僅頁碼變化
-            const pageNum = parseInt(pageParam, 10);
-            if (!isNaN(pageNum) && pageNum !== this.currentPage) {
-              this.currentPage = pageNum;
-              // 不清空 searchResults，因為是翻頁
-              this.fetchSearchResults();
-            }
+            this.loadInitialDataForKeyword();
           } else if (!searchText && this.currentSearchText !== null) {
-            // 搜尋詞被移除
-            this.currentSearchText = null;
-            this.searchResults = [];
-            this.totalPages = 0;
-            this.currentPage = 1;
-            this.errorMessage = "請在導覽列輸入關鍵字進行搜尋。";
-          } else if (searchText && !pageParam && searchText === this.currentSearchText) {
-            // 搜尋詞未變，且沒有 page 參數 (可能用戶直接訪問 /keywordSearch?text=xxx)
-            // 如果 currentPage 不是 1，則可能需要重置到第一頁或按當前頁獲取
-            if (this.currentPage !== 1) {
-              this.currentPage = 1;
-            }
-            this.fetchSearchResults(); // 確保獲取數據
+            this.resetStateForNoQuery();
+          } else if (searchText && this.searchResults.length === 0 && !this.isLoading && !this.errorMessage) {
+            this.currentSearchText = searchText;
+            this.loadInitialDataForKeyword();
           }
         })
       )
       .subscribe();
 
-    // 處理直接訪問時，URL 可能只有 text 參數的情況
     const initialSearchText = this.route.snapshot.queryParamMap.get('text');
-    const initialPage = this.route.snapshot.queryParamMap.get('page');
-
-    if (initialSearchText) {
+    if (initialSearchText && !this.currentSearchText) {
       this.currentSearchText = initialSearchText;
-      this.currentPage = initialPage ? parseInt(initialPage, 10) : 1;
-      if (this.searchResults.length === 0) { // 避免重複加載
-        this.fetchSearchResults();
-      }
-    } else {
-      this.errorMessage = "請在導覽列輸入關鍵字進行搜尋。";
+      this.loadInitialDataForKeyword();
+    } else if (!initialSearchText && !this.isLoading && !this.errorMessage) {
+      this.resetStateForNoQuery();
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  private resetStateForNoQuery(): void {
+    this.currentSearchText = null;
+    this.searchResults = [];
+    this.isLoading = false;
+    this.isLoadingMore = false;
+    this.errorMessage = "請在上方導覽列輸入關鍵字進行搜尋。";
+    this.totalItems = 0;
+    this.totalPages = 0;
+    this.currentPage = 0;
+    this.allDataLoaded = false;
+    // this.paginationPages = []; // Not needed due to getter
   }
 
-  fetchSearchResults(): void { // 移除了 pageToFetch 參數，直接使用 this.currentPage
+  loadInitialDataForKeyword(): void {
+    if (!this.currentSearchText) {
+      this.resetStateForNoQuery();
+      return;
+    }
+    this.searchResults = [];
+    this.allDataLoaded = false;
+    this.totalPages = 0;
+    this.totalItems = 0;
+    this.errorMessage = null;
+    this.currentPage = (this.displayMode === 'loadMore') ? 0 : 1;
+    this.fetchKeywordResults();
+  }
+
+  fetchKeywordResults(pageToFetch?: number): void {
     if (!this.currentSearchText) {
       this.errorMessage = "搜尋關鍵字為空。";
-      this.searchResults = [];
-      this.totalPages = 0;
+      this.isLoading = false;
+      this.isLoadingMore = false;
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = null; // 清除之前的錯誤信息
-    this.totalItems = 0;
+    if (this.displayMode === 'loadMore' && this.allDataLoaded && pageToFetch === undefined) {
+      return;
+    }
+    if (this.isLoading || (this.displayMode === 'loadMore' && this.isLoadingMore)) {
+      return;
+    }
+
+    if (this.displayMode === 'loadMore' && pageToFetch === undefined) {
+      this.isLoadingMore = true;
+    } else {
+      this.isLoading = true;
+    }
+    if(this.currentSearchText) {
+      this.errorMessage = null;
+    }
+
+    let targetPage: number;
+    if (this.displayMode === 'pagination' && pageToFetch !== undefined) {
+      targetPage = pageToFetch;
+    } else {
+      targetPage = this.currentPage + 1;
+      if (this.displayMode === 'pagination' && this.currentPage === 0 && pageToFetch === undefined) targetPage = 1;
+    }
+
+    if (this.totalPages > 0 && targetPage > this.totalPages) {
+      this.isLoading = false;
+      this.isLoadingMore = false;
+      if (this.displayMode === 'loadMore') this.allDataLoaded = true;
+      return;
+    }
+    if (this.displayMode === 'pagination' && targetPage < 1) {
+      this.isLoading = false;
+      this.isLoadingMore = false;
+      return;
+    }
 
     let params = new HttpParams()
       .set('text', this.currentSearchText)
-      .set('page', this.currentPage.toString())
+      .set('page', targetPage.toString())
       .set('limit', this.itemsPerPage.toString());
 
     this.http.get<ApiKeywordSearchResponse>(this.apiUrl, { params })
       .pipe(
         takeUntil(this.destroy$),
-        tap(response => {
-          if (response && response.data) {
-            this.searchResults = response.data;
-            this.currentPage = response.page;
-            this.totalPages = response.totalPages;
-            this.totalItems = response.nbHits;
-            if (response.data.length === 0 && this.currentPage === 1) { // 只有第一頁無結果才顯示找不到
-              this.errorMessage = `找不到與 "${this.currentSearchText}" 相關的演唱會資訊。`;
-            }
-          } else {
-            this.searchResults = [];
-            this.totalPages = 0;
-            this.errorMessage = '無法從伺服器獲取有效的搜尋結果格式。';
-            console.warn('API response missing data or unexpected format:', response);
-          }
-        }),
+        tap(response => this.handleApiResponse(response, targetPage)),
         catchError(error => {
-          console.error('API call for search failed:', error);
           this.errorMessage = `搜尋失敗: ${error.message || '請稍後再試'}`;
-          this.searchResults = [];
-          this.totalPages = 0;
-          return of({} as ApiKeywordSearchResponse); // 返回一個空的符合類型的 Observable
+          if (this.displayMode === 'loadMore') this.allDataLoaded = true;
+          return of({ data: [], page: targetPage, totalPages: this.totalPages, nbHits: this.totalItems });
         }),
         finalize(() => {
           this.isLoading = false;
+          this.isLoadingMore = false;
         })
       )
       .subscribe();
   }
 
-  goToPage(page: number): void {
-    if (this.isLoading || page === this.currentPage || page < 1 || page > this.totalPages) {
-      return;
+  private handleApiResponse(response: ApiKeywordSearchResponse, fetchedPage: number): void {
+    if (response && response.data) {
+      this.totalItems = response.nbHits;
+      this.totalPages = response.totalPages;
+
+      if (this.displayMode === 'loadMore') {
+        this.searchResults = [...this.searchResults, ...response.data];
+        this.currentPage = fetchedPage;
+        if (this.currentPage >= this.totalPages || response.data.length < this.itemsPerPage || response.data.length === 0) {
+          this.allDataLoaded = true;
+        }
+      } else {
+        this.searchResults = response.data;
+        this.currentPage = fetchedPage;
+      }
+      // The getter `paginationPages` will be re-evaluated automatically by Angular's change detection when `totalPages` or `currentPage` changes.
+    } else {
+      if (this.searchResults.length === 0) {
+        this.errorMessage = '從伺服器獲取到的資料格式不正確。';
+      }
+      if (this.displayMode === 'loadMore') this.allDataLoaded = true;
     }
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { page: page }, // 只更新 page，text 參數會被保留 (因為 queryParamsHandling: 'merge' 的預設行為)
-      queryParamsHandling: 'merge',
-    });
-    // ngOnInit 中的 queryParams observable 會監聽到變化並調用 fetchSearchResults
   }
 
+  setDisplayMode(mode: DisplayMode): void {
+    if (this.displayMode === mode || this.isLoading || this.isLoadingMore) return;
+    this.displayMode = mode;
+    this.loadInitialDataForKeyword();
+  }
+
+  goToPage(page: number): void {
+    if (this.displayMode !== 'pagination' || this.isLoading) {
+      return;
+    }
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.fetchKeywordResults(page);
+    }
+  }
+
+  // The getter for paginationPages
   get paginationPages(): number[] {
     if (this.totalPages <= 0) return [];
     const pagesToShow = 5;
@@ -185,12 +230,16 @@ export class KeywordResultsComponent implements OnInit, OnDestroy { // <--- 假�
       endPage = this.totalPages;
     }
 
-
     const pages: number[] = [];
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
     return pages;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   formatArrayDisplay(arr: string[] | number[] | undefined, joiner: string = '、'): string {

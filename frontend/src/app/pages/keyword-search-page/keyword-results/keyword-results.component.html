@@ -1,30 +1,72 @@
 <div class="keyword-results-container container mt-4">
-  <!-- Header: Display Search Term -->
-  <div class="text-center mb-4">
-    <h2 *ngIf="currentSearchText && !isLoading" class="fw-bold">
-      <i class="bi bi-search me-2"></i>搜尋結果: "{{ currentSearchText }}" ({{ totalItems }} 筆)
-    </h2>
-    <h2 *ngIf="!currentSearchText && !isLoading && !errorMessage" class="fw-bold text-muted">
-      請在上方導覽列輸入關鍵字進行搜尋
-    </h2>
+
+  <!-- Header: Display Search Term and Mode Switcher -->
+  <div
+    class="header-row d-flex flex-column flex-md-row align-items-center position-relative mb-3"
+    style="min-height: 80px;"
+  >
+    <!-- Title -->
+    <div class="header-title text-center order-1 w-100">
+      <h2 *ngIf="currentSearchText && !isLoading && !errorMessage" class="fw-bold d-inline-block py-md-3">
+        <i class="bi bi-search me-2"></i>搜尋結果: "{{ currentSearchText }}"
+        <span *ngIf="totalItems > 0" class="fs-5 fw-normal ms-2"> ({{ totalItems }} 筆)</span>
+      </h2>
+      <h2 *ngIf="isLoading && searchResults.length === 0 && currentSearchText" class="fw-bold d-inline-block py-md-3">
+        <i class="bi bi-search me-2"></i>正在搜尋 "{{ currentSearchText }}"...
+      </h2>
+      <!-- Removed the "Please enter keyword" from here, it's handled by errorMessage or initial state -->
+    </div>
+
+    <!-- Mode Switcher (NEW) -->
+    <div class="header-switcher order-2 mt-2 mt-md-0">
+      <div class="btn-group" role="group" aria-label="Display mode">
+        <button
+          type="button"
+          class="btn btn-sm text-nowrap"
+          [class.btn-primary]="displayMode === 'loadMore'"
+          [class.btn-outline-secondary]="displayMode !== 'loadMore'"
+          (click)="setDisplayMode('loadMore')"
+          [disabled]="isLoading || isLoadingMore || !currentSearchText"
+        >
+          查看更多模式
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm text-nowrap"
+          [class.btn-primary]="displayMode === 'pagination'"
+          [class.btn-outline-secondary]="displayMode !== 'pagination'"
+          (click)="setDisplayMode('pagination')"
+          [disabled]="isLoading || isLoadingMore || !currentSearchText"
+        >
+          分頁模式
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="text-center my-5">
+  <!-- Initial Loading Spinner (Covers both modes for initial load of a keyword search) -->
+  <div *ngIf="isLoading && searchResults.length === 0 && !errorMessage && currentSearchText" class="text-center my-5">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
-    <p class="mt-2">正在搜尋...</p>
+    <p class="mt-2">正在搜尋關鍵字 "{{currentSearchText}}" ...</p>
   </div>
 
   <!-- Error Message -->
   <div *ngIf="errorMessage && !isLoading" class="alert alert-danger" role="alert">
     <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
-    <button *ngIf="currentSearchText" (click)="fetchSearchResults()" class="btn btn-sm btn-warning ms-3">重試</button>
+    <button *ngIf="!isLoading && searchResults.length === 0 && !isLoadingMore && currentSearchText" (click)="loadInitialDataForKeyword()" class="btn btn-sm btn-warning ms-3">重試</button>
   </div>
 
   <!-- Search Results Display -->
-  <div *ngIf="!isLoading && !errorMessage && searchResults.length > 0">
+  <div *ngIf="!errorMessage && searchResults.length > 0 && currentSearchText">
+    <!-- Loading indicator for pagination page changes -->
+    <div *ngIf="isLoading && displayMode === 'pagination' && searchResults.length > 0" class="text-center my-3">
+      <div class="spinner-border spinner-border-sm text-secondary" role="status">
+        <span class="visually-hidden">Loading page...</span>
+      </div>
+    </div>
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div *ngFor="let concert of searchResults" class="col">
         <div class="card h-100 shadow-sm">
@@ -63,16 +105,31 @@
     </div>
   </div>
 
-  <!-- No Results Message: errorMessage 會處理 "找不到..." 的情況 -->
-  <!-- 如果 errorMessage 為空但 searchResults 也為空 (例如 API 異常但未設 errorMessage), 可以加一個通用提示 -->
-  <div *ngIf="!isLoading && !errorMessage && searchResults.length === 0 && currentSearchText">
-    <!-- This specific case is now handled by errorMessage, so this div might not be strictly needed
-         if the `errorMessage` for "not found" is considered sufficient. -->
+  <!-- No Results Message -->
+  <div *ngIf="!isLoading && !errorMessage && searchResults.length === 0 && currentSearchText && ( (displayMode === 'loadMore' && allDataLoaded) || (displayMode === 'pagination' && currentPage > 0) )">
+    <div class="alert alert-info text-center" role="alert">
+      找不到與 "{{ currentSearchText }}" 相關的演唱會資訊。
+    </div>
+  </div>
+  <div *ngIf="!currentSearchText && !isLoading && !errorMessage && searchResults.length === 0" class="alert alert-warning text-center" role="alert">
+    請在上方導覽列輸入關鍵字進行搜尋。
   </div>
 
 
-  <!-- Pagination Controls -->
-  <nav *ngIf="!isLoading && !errorMessage && totalPages > 1 && searchResults.length > 0"
+  <!-- "Load More" Button Area (Only for loadMore mode) (NEW) -->
+  <div *ngIf="displayMode === 'loadMore' && !isLoading && !errorMessage && !allDataLoaded && searchResults.length > 0 && currentSearchText" class="text-center mt-4 mb-2">
+    <button (click)="fetchKeywordResults()" class="btn btn-outline-primary btn-lg" [disabled]="isLoadingMore">
+      <span *ngIf="isLoadingMore" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      {{ isLoadingMore ? '載入中...' : '查看更多搜尋結果' }}
+    </button>
+  </div>
+  <div *ngIf="displayMode === 'loadMore' && !isLoading && !errorMessage && allDataLoaded && searchResults.length > 0 && currentSearchText" class="alert alert-light text-center mt-4 mb-2" role="alert">
+    已載入所有與 "{{ currentSearchText }}" 相關的演唱會資訊。
+  </div>
+
+
+  <!-- Pagination Controls (Conditional on pagination mode) -->
+  <nav *ngIf="displayMode === 'pagination' && totalPages > 1 && !isLoading && !errorMessage && searchResults.length > 0 && currentSearchText"
        aria-label="Search results navigation"
        class="mt-4 d-flex justify-content-center">
     <ul class="pagination pagination-mobile-wrap">
@@ -82,7 +139,6 @@
           <span aria-hidden="true">«</span>
         </a>
       </li>
-
       <!-- First page and ellipsis -->
       <li *ngIf="paginationPages[0] > 1" class="page-item" [class.disabled]="isLoading">
         <a class="page-link" href="javascript:void(0)" (click)="goToPage(1)">1</a>
@@ -90,7 +146,6 @@
       <li *ngIf="paginationPages[0] > 2" class="page-item disabled">
         <span class="page-link">…</span>
       </li>
-
       <!-- Page Numbers -->
       <li
         *ngFor="let pageNum of paginationPages"
@@ -100,7 +155,6 @@
       >
         <a class="page-link" href="javascript:void(0)" (click)="goToPage(pageNum)">{{ pageNum }}</a>
       </li>
-
       <!-- Ellipsis and Last page -->
       <li *ngIf="paginationPages[paginationPages.length - 1] < totalPages - 1" class="page-item disabled">
         <span class="page-link">…</span>
@@ -108,7 +162,6 @@
       <li *ngIf="paginationPages[paginationPages.length - 1] < totalPages" class="page-item" [class.disabled]="isLoading">
         <a class="page-link" href="javascript:void(0)" (click)="goToPage(totalPages)">{{ totalPages }}</a>
       </li>
-
       <!-- Next Button -->
       <li class="page-item" [class.disabled]="currentPage === totalPages || isLoading">
         <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage + 1)" aria-label="Next">
@@ -117,7 +170,7 @@
       </li>
     </ul>
   </nav>
-  <div *ngIf="!isLoading && !errorMessage && totalPages > 0 && searchResults.length > 0" class="text-center mt-2">
+  <div *ngIf="displayMode === 'pagination' && totalPages > 0 && !isLoading && !errorMessage && searchResults.length > 0 && currentSearchText" class="text-center mt-2">
     <small>第 {{ currentPage }} 頁 / 共 {{ totalPages }} 頁 (本頁顯示 {{ searchResults.length }} 筆)</small>
   </div>
 
