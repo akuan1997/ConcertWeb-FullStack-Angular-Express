@@ -59,19 +59,29 @@
           </li>
         </ul>
 
+        <!-- Start Date Input -->
         <div class="d-flex flex-column flex-md-row align-items-center my-2 my-md-0 ms-md-2 navbar-date-filter-group">
-          <div class="d-flex align-items-center navbar-date-filter-item-group"> <!-- 包裹 label 和 input -->
+          <div class="d-flex align-items-center navbar-date-filter-item-group">
             <label for="start-date" class="text-white me-2 navbar-date-label">Start</label>
-            <input type="date" id="start-date" class="form-control form-control-sm navbar-date-input">
+            <input type="date" id="start-date" class="form-control form-control-sm navbar-date-input" #startDateInput>
           </div>
         </div>
 
+        <!-- End Date Input -->
         <div class="d-flex flex-column flex-md-row align-items-center my-2 my-md-0 ms-md-2 navbar-date-filter-group">
-          <div class="d-flex align-items-center navbar-date-filter-item-group"> <!-- 包裹 label 和 input -->
+          <div class="d-flex align-items-center navbar-date-filter-item-group">
             <label for="end-date" class="text-white me-2 navbar-date-label">End</label>
-            <input type="date" id="end-date" class="form-control form-control-sm navbar-date-input">
+            <input type="date" id="end-date" class="form-control form-control-sm navbar-date-input" #endDateInput>
           </div>
         </div>
+
+        <!-- Date Search Button - 新增的按鈕 -->
+        <div class="ms-md-2 my-2 my-md-0">
+          <button class="btn btn-sm btn-primary btn-white-border " type="button" (click)="onDateSearchSubmit(startDateInput.value, endDateInput.value)">
+            <i class="bi bi-search"></i> 日期搜尋
+          </button>
+        </div>
+        <!-- Date Search Button End -->
 
         <form class="ms-md-3 mt-2 mt-md-0 d-flex" (ngSubmit)="onSearchSubmit(searchInput.value)" #searchForm="ngForm">
           <input

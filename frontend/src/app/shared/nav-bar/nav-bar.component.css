@@ -1,3 +1,22 @@
+.btn-white-border {
+  border: 1px solid white; /* 設定一個 2px 寬的白色實線邊框 */
+  /* 如果你希望邊框更粗或更細，可以調整 '2px' 這個值 */
+}
+
+.btn-white-border:hover {
+  /*
+  Bootstrap 的 btn-primary 在 hover 時會改變 border-color。
+  如果想保持白色，可以再次指定。
+  但通常 btn-primary 的 hover 效果是加深背景色，
+  此時白色邊框依然可見且效果不錯。
+  如果需要特別指定 hover 時的邊框，可以像這樣：
+  border-color: white;
+  或者
+  */
+  /*懸停時邊框變淺灰色*/
+  border-color: lightgray;
+}
+
 /* 針對桌面視圖 (通常 md斷點是 768px 以上) */
 @media (min-width: 768px) {
   .navbar-nav .nav-item.dropdown:hover .dropdown-menu {

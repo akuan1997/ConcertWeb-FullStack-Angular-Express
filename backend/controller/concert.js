@@ -178,7 +178,7 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
 
     // 處理沒有日期參數的情況
     if (!startDateObj && !endDateObj) {
-        console.log("[getDateSearchData] 未提供日期參數，回退到按 'tim' 排序。");
+        // console.log("[getDateSearchData] 未提供日期參數，回退到按 'tim' 排序。");
         const allData = await concertModel.find()
             .sort({"tim": -1}) // 如果沒有日期篩選，按 'tim' 降冪排序
             .skip(skip)
@@ -193,7 +193,7 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
     }
 
     // 警告：對於大型資料庫，find({}) 效能不佳
-    console.log("[getDateSearchData] 正在獲取所有項目進行客戶端篩選和排序 (大型資料庫可能效能不佳)...");
+    // console.log("[getDateSearchData] 正在獲取所有項目進行客戶端篩選和排序 (大型資料庫可能效能不佳)...");
     const allItems = await concertModel.find({});
 
     const filteredByDate = allItems.filter(item => {
@@ -263,7 +263,7 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
     const totalFilteredItems = sortedData.length;
     const paginatedData = sortedData.slice(skip, skip + limit);
 
-    console.log(`[getDateSearchData] 篩選並排序後，返回 ${paginatedData.length} 筆資料 (總符合條件 ${totalFilteredItems} 筆)。`);
+    // console.log(`[getDateSearchData] 篩選並排序後，返回 ${paginatedData.length} 筆資料 (總符合條件 ${totalFilteredItems} 筆)。`);
 
     res.status(200).json({
         data: paginatedData,

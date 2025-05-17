@@ -15,18 +15,33 @@ import { FormsModule } from '@angular/forms'; // <--- 導入 FormsModule
 export class NavBarComponent {
   private router = inject(Router); // 注入 Router 服務
 
+  // 你現有的 onSearchSubmit 方法 (用於關鍵字搜尋)
   onSearchSubmit(searchTerm: string): void {
-    const trimmedSearchTerm = searchTerm.trim();
-    if (trimmedSearchTerm) {
-      // 導航到 keywordSearch 頁面，並將搜尋詞作為查詢參數傳遞
-      this.router.navigate(['/keywordSearch'], { queryParams: { text: trimmedSearchTerm } });
-      // 如果你想在提交後清空搜尋框，可以這樣做 (需要 ViewChild 或將 input 綁定到組件屬性)
-      // 但對於跳轉到新頁面，通常不需要立即清空原頁面的輸入框
+    if (searchTerm && searchTerm.trim() !== '') {
+      this.router.navigate(['/keywordSearch'], { queryParams: { text: searchTerm.trim() } });
+    }
+  }
+
+  // 新增的方法，用於處理日期搜尋
+  onDateSearchSubmit(startDateValue: string, endDateValue: string): void {
+    const queryParams: any = {};
+
+    // HTML input type="date" 返回的格式是 "YYYY-MM-DD"
+    // 我們的 API 期望的格式是 "YYYYMMDD"
+    if (startDateValue) {
+      queryParams.start_date = startDateValue.replace(/-/g, ''); // 移除 '-'
+    }
+    if (endDateValue) {
+      queryParams.end_date = endDateValue.replace(/-/g, ''); // 移除 '-'
+    }
+
+    // 只有當至少提供一個日期時才進行導航
+    if (Object.keys(queryParams).length > 0) {
+      this.router.navigate(['/dateSearch'], { queryParams }); // 導航到日期搜尋結果頁
     } else {
-      // 可選：如果搜尋詞為空，可以給用戶提示或不執行任何操作
-      console.log('Search term is empty.');
-      // 或者導航到一個通用的搜尋頁面（如果有的話）
-      // this.router.navigate(['/search']);
+      // 可選：如果沒有選擇任何日期，可以給予提示或不做任何事
+      console.log('請至少選擇一個開始或結束日期');
+      // alert('請至少選擇一個開始或結束日期');
     }
   }
 }
