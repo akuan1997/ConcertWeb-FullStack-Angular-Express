@@ -39,7 +39,7 @@ export class AllConcertInfoComponent implements OnInit {
   allDataLoaded: boolean = false; // For loadMore mode: if all pages are loaded
 
   // API Endpoint
-  private apiUrl = 'http://localhost:3000/api/allData';
+  private apiUrl = `${window.location.origin}/api/allData`;
 
   ngOnInit(): void {
     this.loadInitialData();

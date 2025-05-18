@@ -43,7 +43,7 @@ export class HomeConcertInfoComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string | null = null;
 
-  private apiUrl = 'http://localhost:3000/api/data';
+  private apiUrl = `${window.location.origin}/api/data`;
 
   // 這是 OnInit 生命週期鉤子的實現。當組件初始化完成後，它會立即調用 fetchConcertInfo 方法來獲取演唱會資料。
   ngOnInit(): void {

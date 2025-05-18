@@ -53,7 +53,7 @@ export class DateResultsComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router); // Inject Router
 
-  private apiUrl = 'http://localhost:3000/api/getDateSearchData';
+  private apiUrl = `${window.location.origin}/api/getDateSearchData`;
 
   ngOnInit(): void {
     this.routeSubscription = this.route.queryParams.pipe(

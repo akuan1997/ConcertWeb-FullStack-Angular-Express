@@ -45,7 +45,7 @@ export class KeywordResultsComponent implements OnInit, OnDestroy {
   // paginationPages: number[] = []; // <--- REMOVE THIS LINE
 
   private destroy$ = new Subject<void>();
-  private apiUrl = 'http://localhost:3000/api/getKeywordSearchData';
+  private apiUrl = `${window.location.origin}/api/getKeywordSearchData`;
 
   ngOnInit(): void {
     this.route.queryParams

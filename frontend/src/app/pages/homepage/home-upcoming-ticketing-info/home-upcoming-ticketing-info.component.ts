@@ -33,7 +33,7 @@ export class HomeUpcomingTicketingInfoComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string | null = null;
 
-  private apiUrl = 'http://localhost:3000/api/data'; // 獲取所有資料
+  private apiUrl = `${window.location.origin}/api/data`; // 獲取所有資料
 
   ngOnInit(): void {
     this.fetchAndFilterConcerts();
