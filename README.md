@@ -235,4 +235,16 @@
 
 ---
 
-## 📁 專案結構概覽
+## 👨‍💻 作者
+
+*   **akuan1997**
+    *   GitHub: [@akuan1997](https://github.com/akuan1997)
+
+---
+
+## 📜 授權 (License)
+
+該專案採用 [MIT](LICENSE) 授權。 (如果您的專案中沒有 LICENSE 檔案，可以考慮添加一個，或者移除此行)
+
+---
+**[⬆️ 返回頂部](#concertweb---音樂會資訊瀏覽篩選與搜尋平台-angular--expressjs)**
