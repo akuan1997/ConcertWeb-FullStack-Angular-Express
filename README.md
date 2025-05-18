@@ -28,36 +28,34 @@
 ---
 
 ## 📸 專案截圖/演示
-
-**(強烈建議在此處添加專案的截圖或 GIF 動畫！例如：首頁、音樂會列表（展示不同瀏覽模式）、篩選器操作界面、關鍵字搜尋結果頁面、音樂會詳情頁面。特別可以包含一張手機版面截圖來展示 RWD 效果。)**
-
-*   **首頁截圖 (桌面版):**
-    ![首頁 封面](./result-images/desktop_cover.png)
-    ![首頁 最新資訊](./result-images/desktop_latest_concert_info.png)
-    ![首頁 近期售票](./result-images/desktop_upcoming_ticketing.png)
+### 桌面版
+*   **首頁截圖 :**
+    ![桌面 首頁 封面](./result-images/desktop_cover.png)
+    ![桌面 首頁 最新資訊](./result-images/desktop_latest_concert_info.png)
+    ![桌面 首頁 近期售票](./result-images/desktop_upcoming_ticketing.png)
 *   **關鍵字搜尋功能截圖:**
-    ![關鍵字搜尋功能](./result-images/desktop_keyword_search.png)
+    ![桌面 關鍵字搜尋](./result-images/desktop_keyword_search.png)
 *   **日期搜尋功能截圖:**
-    ![日期搜尋功能](./result-images/desktop_date_search.png)
+    ![桌面 日期搜尋](./result-images/desktop_date_search.png)
 *   **城市搜尋功能截圖:**
-    ![城市搜尋](./result-images/desktop_city_selection.png)
+    ![桌面 城市搜尋](./result-images/desktop_city_selection.png)
 *   **不同瀏覽模式功能截圖:**
     ![桌面 查看更多](./result-images/desktop_different_views_more.png)
     ![桌面 分頁](./result-images/desktop_different_views_page.png)
-
-*   **首頁截圖 (手機版):**
-    ![首頁 封面](./result-images/desktop_cover.png)
-    ![首頁 最新資訊](./result-images/desktop_latest_concert_info.png)
-    ![首頁 近期售票](./result-images/desktop_upcoming_ticketing.png)
+### 行動版
+*   **首頁截圖:**
+    ![行動 首頁 封面](./result-images/desktop_cover.png)
+    ![行動 首頁 最新資訊](./result-images/desktop_latest_concert_info.png)
+    ![行動 首頁 近期售票](./result-images/desktop_upcoming_ticketing.png)
 *   **關鍵字搜尋功能截圖:**
-    ![關鍵字搜尋功能](./result-images/desktop_keyword_search.png)
+    ![行動 關鍵字搜尋功能](./result-images/desktop_keyword_search.png)
 *   **日期搜尋功能截圖:**
-    ![日期搜尋功能](./result-images/desktop_date_search.png)
+    ![行動 日期搜尋功能](./result-images/desktop_date_search.png)
 *   **城市搜尋功能截圖:**
-    ![城市搜尋](./result-images/desktop_city_selection.png)
+    ![行動 城市搜尋](./result-images/desktop_city_selection.png)
 *   **不同瀏覽模式功能截圖:**
-    ![桌面 查看更多](./result-images/desktop_different_views_more.png)
-    ![桌面 分頁](./result-images/desktop_different_views_page.png)
+    ![行動 查看更多](./result-images/desktop_different_views_more.png)
+    ![行動 分頁](./result-images/desktop_different_views_page.png)
 
 ---
 
