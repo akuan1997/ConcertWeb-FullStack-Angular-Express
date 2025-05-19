@@ -77,12 +77,11 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 [//]: # (  ![行動 查看更多]&#40;./result-images/mobile_different_view_more.jpg&#41;)
 
 [//]: # (  ![行動 分頁]&#40;./result-images/mobile_different_view_page.jpg&#41;)
+**首頁**
 
-| 行動-首頁-封面 | 行動-首頁-近期售票 | 行動 首頁 導覽列 |
+| 封面 | 近期售票 | 導覽列  |
 |---|---|---|
 | <img src="./result-images/mobile_cover.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_upcoming_ticketing.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_navbar.jpg" alt="行動版導覽列" width="200"> |
-<!-- 可选：在图片下方添加说明 -->
-| 封面說明 | 近期售票說明 | 導覽列說明 |
 
 ---
 
