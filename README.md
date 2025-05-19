@@ -34,50 +34,6 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 
 ### 桌面版
 
-<details>
-<summary><strong>🖥️ 首頁展示 (點擊展開/收合)</strong></summary>
-
-**1. 首頁 - 封面與主要內容**
-<img src="./result-images/desktop_cover.png" alt="桌面 首頁 封面" width="700">
-*首頁頂部，包含主要視覺和導覽入口。*
-
-**2. 首頁 - 最新演唱會資訊**
-<img src="./result-images/desktop_latest_concert_info.png" alt="桌面 首頁 最新資訊" width="700">
-*展示最新的演唱會列表。*
-
-**3. 首頁 - 近期售票**
-<img src="./result-images/desktop_upcoming_ticketing.png" alt="桌面 首頁 近期售票" width="700">
-*提示即將開始售票的活動。*
-
-</details>
-
-<details>
-<summary><strong>🔍 搜尋與篩選功能 (點擊展開/收合)</strong></summary>
-
-**1. 關鍵字搜尋**
-<img src="./result-images/desktop_keyword_search.png" alt="桌面 關鍵字搜尋" width="700">
-*使用者可以輸入關鍵字來搜尋相關音樂會。*
-
-**2. 日期篩選**
-<img src="./result-images/desktop_date_search.png" alt="桌面 日期搜尋" width="700">
-*提供日期選擇器，方便使用者篩選特定時間範圍的活動。*
-
-**3. 城市篩選**
-<img src="./result-images/desktop_city_selection.png" alt="桌面 城市搜尋" width="700">
-*允許使用者根據舉辦城市進行篩選。*
-
-</details>
-
-<details>
-<summary><strong>📄 不同瀏覽模式 (點擊展開/收合)</strong></summary>
-
-| 查看更多 (無限滾動) | 分頁模式 |
-|---|---|
-| <img src="./result-images/desktop_different_views_more.png" alt="桌面 查看更多模式" width="400"> | <img src="./result-images/desktop_different_views_page.png" alt="桌面 分頁模式" width="400"> |
-| *在某些列表頁面，使用者可以持續向下滾動載入更多內容。* | *在另一些頁面，採用傳統的分頁方式瀏覽。* |
-
-</details>
-
 * **首頁截圖 :**
   ![桌面 首頁 封面](./result-images/desktop_cover.png)
   ![桌面 首頁 最新資訊](./result-images/desktop_latest_concert_info.png)
