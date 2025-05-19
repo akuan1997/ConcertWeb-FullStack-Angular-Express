@@ -50,16 +50,6 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 
 ### 行動版
 
-[//]: # (* **首頁截圖:**)
-
-[//]: # (  ![行動 首頁 封面]&#40;./result-images/mobile_cover.jpg&#41;)
-
-[//]: # (  ![行動 首頁 近期售票]&#40;./result-images/mobile_upcoming_ticketing.jpg&#41;)
-
-[//]: # (* **導覽列**)
-
-[//]: # (  ![行動 首頁 導覽列]&#40;./result-images/mobile_navbar.jpg&#41;)
-
 [//]: # (* **關鍵字搜尋功能截圖:**)
 
 [//]: # (  ![行動 關鍵字搜尋功能]&#40;./result-images/mobile_keyword_search.jpg&#41;)
@@ -77,12 +67,16 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 [//]: # (  ![行動 查看更多]&#40;./result-images/mobile_different_view_more.jpg&#41;)
 
 [//]: # (  ![行動 分頁]&#40;./result-images/mobile_different_view_page.jpg&#41;)
+
 **首頁**
 
 | 封面 | 近期售票 | 導覽列  |
 |---|---|---|
 | <img src="./result-images/mobile_cover.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_upcoming_ticketing.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_navbar.jpg" alt="行動版導覽列" width="200"> |
 
+| 關鍵字搜尋 | 日期搜尋 | 城市搜尋  |
+|---|---|---|
+| <img src="./result-images/mobile_keyword_search.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_date_search.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_city_selection.jpg" alt="行動版導覽列" width="200"> |
 ---
 
 ## 🛠️ 主要功能
