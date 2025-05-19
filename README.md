@@ -50,17 +50,6 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 
 ### 行動版
 
-[//]: # (* **關鍵字搜尋功能截圖:**)
-
-[//]: # (  ![行動 關鍵字搜尋功能]&#40;./result-images/mobile_keyword_search.jpg&#41;)
-
-[//]: # (* **日期搜尋功能截圖:**)
-
-[//]: # (  ![行動 日期搜尋功能]&#40;./result-images/mobile_date_search.jpg&#41;)
-
-[//]: # (* **城市搜尋功能截圖:**)
-
-[//]: # (  ![行動 城市搜尋]&#40;./result-images/mobile_city_selection.jpg&#41;)
 
 [//]: # (* **不同瀏覽模式功能截圖:**)
 
@@ -79,6 +68,13 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 | 關鍵字搜尋 | 日期搜尋 | 城市搜尋  |
 |---|---|---|
 | <img src="./result-images/mobile_keyword_search.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_date_search.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_city_selection.jpg" alt="行動版導覽列" width="200"> |
+
+**瀏覽模式**
+
+| 查看更多 | 分頁 |
+|---|---|
+| <img src="./result-images/mobile_different_view_more.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_different_view_page.jpg" alt="行動版近期售票" width="200"> |
+
 ---
 
 ## 🛠️ 主要功能
