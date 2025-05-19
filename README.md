@@ -71,6 +71,13 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 <details>
 <summary><strong>📄 不同瀏覽模式 (點擊展開/收合)</strong></summary>
 
+| 查看更多 (無限滾動) | 分頁模式 |
+|---|---|
+| <img src="./result-images/desktop_different_views_more.png" alt="桌面 查看更多模式" width="400"> | <img src="./result-images/desktop_different_views_page.png" alt="桌面 分頁模式" width="400"> |
+| *在某些列表頁面，使用者可以持續向下滾動載入更多內容。* | *在另一些頁面，採用傳統的分頁方式瀏覽。* |
+
+</details>
+
 * **首頁截圖 :**
   ![桌面 首頁 封面](./result-images/desktop_cover.png)
   ![桌面 首頁 最新資訊](./result-images/desktop_latest_concert_info.png)
