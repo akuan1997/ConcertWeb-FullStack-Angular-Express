@@ -36,8 +36,7 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 
 * **首頁截圖 :**
   ![桌面 首頁 封面](./result-images/desktop_cover.png)
-  ![桌面 首頁 最新資訊](./result-images/desktop_latest_concert_info.png)
-  ![桌面 首頁 近期售票](./result-images/desktop_upcoming_ticketing.png)
+  ![桌面 首頁 近期售票](./result-images/desktop_upcoming_ticketing2.png)
 * **關鍵字搜尋功能截圖:**
   ![桌面 關鍵字搜尋](./result-images/desktop_keyword_search.png)
 * **日期搜尋功能截圖:**
