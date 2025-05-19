@@ -60,19 +60,15 @@
         </ul>
 
         <!-- Start Date Input -->
-        <div class="d-flex flex-column flex-md-row align-items-center my-2 my-md-0 ms-md-2 navbar-date-filter-group">
-          <div class="d-flex align-items-center navbar-date-filter-item-group">
-            <label for="start-date" class="text-white me-2 navbar-date-label">Start</label>
-            <input type="date" id="start-date" class="form-control form-control-sm navbar-date-input" #startDateInput>
-          </div>
+        <div class="d-flex align-items-center my-2 my-md-0 ms-md-2">
+          <label for="start-date" class="text-white me-2 flex-shrink-0 navbar-date-label">Start</label> <!-- 新增 navbar-date-label class -->
+          <input type="date" id="start-date" class="form-control form-control-sm" #startDateInput>
         </div>
 
         <!-- End Date Input -->
-        <div class="d-flex flex-column flex-md-row align-items-center my-2 my-md-0 ms-md-2 navbar-date-filter-group">
-          <div class="d-flex align-items-center navbar-date-filter-item-group">
-            <label for="end-date" class="text-white me-2 navbar-date-label">End</label>
-            <input type="date" id="end-date" class="form-control form-control-sm navbar-date-input" #endDateInput>
-          </div>
+        <div class="d-flex align-items-center my-2 my-md-0 ms-md-2">
+          <label for="end-date" class="text-white me-2 flex-shrink-0 navbar-date-label">End</label> <!-- 新增 navbar-date-label class -->
+          <input type="date" id="end-date" class="form-control form-control-sm" #endDateInput>
         </div>
 
         <!-- Date Search Button - 新增的按鈕 -->

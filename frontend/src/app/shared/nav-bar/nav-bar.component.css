@@ -17,6 +17,23 @@
   border-color: lightgray;
 }
 
+.navbar-date-label {
+  min-width: 2.5em; /* 您可以調整這個值，例如 45px, 50px, 或 3.5em，直到對齊效果滿意為止 */
+  display: inline-block; /* 確保 min-width 生效 */
+  /* text-align: right; */ /* 可選：如果您希望標籤文字在固定寬度內靠右對齊，可以取消註解此行 */
+}
+
+@media (max-width: 767.98px) { /* 小於 md 斷點 */
+  .navbar-collapse .d-flex.flex-column .form-control {
+    /* 在手機折疊模式下，讓日期輸入框寬度更一致 */
+    /* width: 100%; /* 這可能會讓它太寬，需要配合其父容器調整 */
+  }
+  .navbar-collapse .d-flex.flex-column .d-flex.align-items-center {
+    /* 確保在手機堆疊時，標籤+輸入框的組合可以設定寬度 */
+    /* width: 100%; */ /* 如果希望整個標籤+輸入框的組合佔滿父容器寬度 */
+  }
+}
+
 /* 針對桌面視圖 (通常 md斷點是 768px 以上) */
 @media (min-width: 768px) {
   .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
