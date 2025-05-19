@@ -51,9 +51,9 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 
 **首頁**
 
-| 封面 | 近期售票 | 導覽列  |
-|---|---|---|
-| <img src="./result-images/mobile_cover.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_upcoming_ticketing.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_navbar.jpg" alt="行動版導覽列" width="200"> |
+| 封面 | 近期售票 | 導覽列                                                                     |
+|---|---|-------------------------------------------------------------------------|
+| <img src="./result-images/mobile_cover.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_upcoming_ticketing.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_navbar2.jpg" alt="行動版導覽列" width="200"> |
 
 **搜尋功能**
 
