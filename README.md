@@ -74,6 +74,8 @@ Ubuntu) 伺服器上，透過 Docker Hub 進行映像檔管理。
 |---|---|---|
 | <img src="./result-images/mobile_cover.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_upcoming_ticketing.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_navbar.jpg" alt="行動版導覽列" width="200"> |
 
+**搜尋功能**
+
 | 關鍵字搜尋 | 日期搜尋 | 城市搜尋  |
 |---|---|---|
 | <img src="./result-images/mobile_keyword_search.jpg" alt="行動版首頁封面" width="200"> | <img src="./result-images/mobile_date_search.jpg" alt="行動版近期售票" width="200"> | <img src="./result-images/mobile_city_selection.jpg" alt="行動版導覽列" width="200"> |
