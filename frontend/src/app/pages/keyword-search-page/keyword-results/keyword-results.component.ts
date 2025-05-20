@@ -129,11 +129,14 @@ export class KeywordResultsComponent implements OnInit, OnDestroy {
     }
 
     let targetPage: number;
-    if (this.displayMode === 'pagination' && pageToFetch !== undefined) {
-      targetPage = pageToFetch;
-    } else {
+    if (this.displayMode === 'pagination') {
+      // 如果 pageToFetch 已定義 (例如，用戶點擊分頁按鈕)，則使用它。
+      // 否則 (pagination 模式的初次載入)，使用 this.currentPage (已由 loadInitialDataForDateRange 設為 1)。
+      targetPage = pageToFetch !== undefined ? pageToFetch : this.currentPage;
+    } else { // loadMore mode
+      // 對於 loadMore 模式，currentPage 是最後成功載入的頁面 (初始為 0)。
+      // 所以總是獲取下一頁。
       targetPage = this.currentPage + 1;
-      if (this.displayMode === 'pagination' && this.currentPage === 0 && pageToFetch === undefined) targetPage = 1;
     }
 
     if (this.totalPages > 0 && targetPage > this.totalPages) {
