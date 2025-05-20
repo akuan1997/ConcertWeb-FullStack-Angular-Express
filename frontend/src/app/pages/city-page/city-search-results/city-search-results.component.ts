@@ -213,7 +213,7 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
       return;
     }
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-      // this.currentPage = page; // currentPage will be updated in handleApiResponse
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.fetchConcerts(page); // Fetch specific page for pagination
     }
   }

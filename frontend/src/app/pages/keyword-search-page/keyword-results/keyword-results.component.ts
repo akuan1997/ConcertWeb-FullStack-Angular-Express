@@ -205,6 +205,7 @@ export class KeywordResultsComponent implements OnInit, OnDestroy {
       return;
     }
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.fetchKeywordResults(page);
     }
   }
