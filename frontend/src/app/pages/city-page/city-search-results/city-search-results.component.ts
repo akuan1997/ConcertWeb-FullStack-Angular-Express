@@ -93,6 +93,7 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
 
   // --- MODIFIED: Renamed fetchData to fetchConcerts, and adapted for modes ---
   fetchConcerts(pageToFetch?: number): void { // pageToFetch is for pagination mode
+
     if (!this.currentCity) {
       this.errorMessage = '未選擇城市，無法載入資料。';
       this.isLoading = false; // Ensure loading is false if no city
@@ -117,13 +118,14 @@ export class CitySearchResultsComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
 
     let targetPage: number;
-    if (this.displayMode === 'pagination' && pageToFetch !== undefined) {
-      targetPage = pageToFetch;
+
+    if (this.displayMode === 'pagination') {
+      targetPage = pageToFetch !== undefined ? pageToFetch : this.currentPage;
     } else { // loadMore or initial load for pagination
       targetPage = this.currentPage + 1; // For loadMore, currentPage is last loaded page (0 initially)
       // For pagination initial, currentPage is 1, targetPage is 1 (handled by pageToFetch)
       // If pagination initial and pageToFetch is undefined, targetPage=1
-      if (this.displayMode === 'pagination' && this.currentPage === 0 && pageToFetch === undefined) targetPage = 1;
+      // if (this.displayMode === 'pagination' && this.currentPage === 0 && pageToFetch === undefined) targetPage = 1;
     }
 
 
