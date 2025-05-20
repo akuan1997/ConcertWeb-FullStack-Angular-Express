@@ -1,98 +1,6 @@
 const concertModel = require("../models/concert");
 const asyncWrapper = require("../middleware/async");
 
-const getRawData = asyncWrapper(async (req, res) => {
-    // 不做任何的分頁以及查詢
-    const data = await concertModel.find()
-        .sort({"tim": -1}) // 依 tim 降序排列，也就是說按照最新到最舊
-
-    res.status(200).json({
-        data,
-        nbHits: data.length
-    });
-});
-
-const getAllData = asyncWrapper(async (req, res) => {
-    const page = parseInt(req.query.page) || 1; // 預設第一頁
-    const limit = parseInt(req.query.limit) || 30; // 每頁 30 筆
-    const skip = (page - 1) * limit;
-
-    const data = await concertModel.find()
-        .sort({"tim": -1}) // 依 tim 降序排列，也就是說按照最新到最舊
-        .skip(skip) // 跳過前面幾筆
-        .limit(limit); // 取出指定數量的資料
-
-    const total = await concertModel.countDocuments(); // 總筆數
-    const totalPages = Math.ceil(total / limit); // 總頁數
-
-    res.status(200).json({
-        data,
-        page,
-        totalPages,
-        nbHits: data.length
-    });
-});
-
-const getKeywordSearchData  = asyncWrapper(async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 30;
-    const searchText = req.query.text ? req.query.text.trim() : "";
-
-    const query = {};
-
-    if (searchText) {
-        query.$or = [
-            { tit: { $regex: searchText, $options: 'i' } },
-            { int: { $regex: searchText, $options: 'i' } }
-        ];
-    }
-
-    const data = await concertModel.find(query)
-        .sort({ "tim": -1 }) // 依 tim 降序排列，也就是說按照最新到最舊
-        .skip((page - 1) * limit)
-        .limit(limit);
-
-    const totalItems = await concertModel.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
-
-    res.status(200).json({
-        data,
-        page,
-        totalPages,
-        nbHits: totalItems
-    });
-});
-
-const getCitySelectionData = asyncWrapper(async (req, res) => {
-    const page = parseInt(req.query.page) || 1; // 預設第一頁
-    const limit = parseInt(req.query.limit) || 30; // 每頁 30 筆
-    const skip = (page - 1) * limit;
-
-    const { cit } = req.query; // 從 req.query 中解構出 cit
-    const queryObject = {}; // 初始化一個空的查詢物件
-    if (cit) { // 如果請求的 query 中包含了 cit 參數
-        queryObject.cit = cit;  // 將 cit 添加到查詢條件中，這會查找 cit 欄位完全等於提供的 cit 值的文檔
-    }
-
-    // 使用 queryObject 來執行查詢
-    const data = await concertModel.find(queryObject)
-        .sort({"tim": -1}) // 依 tim 降序排列，也就是說按照最新到最舊
-        .skip(skip) // 跳過前面幾筆
-        .limit(limit); // 取出指定數量的資料;
-
-    // 3. 獲取符合 queryObject 條件的總文檔數 (用於前端計算總頁數)
-    //    這個 countDocuments 應該在 .skip() 和 .limit() 之前，或者對原始 queryObject 進行
-    const totalItems = await concertModel.countDocuments(queryObject);
-
-    // 4. 返回分頁後的數據和總數
-    res.status(200).json({
-        data,             // 這是分頁後的數據
-        nbHits: totalItems, // 這是符合 cit 條件的總數據量
-        page: page,       // 可以選擇性地返回當前頁碼
-        totalPages: Math.ceil(totalItems / limit) // 可以選擇性地返回總頁數
-    });
-});
-
 function parseQueryDateParam(dateStr) {
     if (!dateStr || !/^\d{8}$/.test(dateStr)) {
         return null;
@@ -143,12 +51,169 @@ function parsePdtDateString(pdtDateStr) {
     return date;
 }
 
+// 輔助函數：從 pdt 陣列中獲取最早的有效日期
+const getEarliestPdtDate = (pdtArray) => {
+    if (!pdtArray || pdtArray.length === 0) return null;
+    const validDates = pdtArray
+        .map(pdtStr => parsePdtDateString(pdtStr)) // 將字串轉換為 Date 物件
+        .filter(date => date !== null);            // 過濾掉無效日期
+
+    if (validDates.length === 0) return null;
+
+    // 按時間升冪排序並取第一個
+    return validDates.sort((d1, d2) => d1.getTime() - d2.getTime())[0];
+};
+
+const getRawData = asyncWrapper(async (req, res) => {
+    // 不做任何的分頁以及查詢
+    const data = await concertModel.find()
+        .sort({"tim": -1}) // 依 tim 降序排列，也就是說按照最新到最舊
+
+    res.status(200).json({
+        data,
+        nbHits: data.length
+    });
+});
+
+const getAllData = asyncWrapper(async (req, res) => {
+    const page = parseInt(req.query.page) || 1; // 預設第一頁
+    const limit = parseInt(req.query.limit) || 30; // 每頁 30 筆
+    const skip = (page - 1) * limit;
+
+    const data = await concertModel.find()
+        .sort({"tim": -1}) // 依 tim 降序排列，也就是說按照最新到最舊
+        .skip(skip) // 跳過前面幾筆
+        .limit(limit); // 取出指定數量的資料
+
+    const total = await concertModel.countDocuments(); // 總筆數
+    const totalPages = Math.ceil(total / limit); // 總頁數
+
+    res.status(200).json({
+        data,
+        page,
+        totalPages,
+        nbHits: data.length
+    });
+});
+
+const getKeywordSearchData = asyncWrapper(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 30;
+    const skip = (page - 1) * limit; // 計算 skip 值
+    const searchText = req.query.text ? req.query.text.trim() : "";
+
+    const query = {};
+    if (searchText) {
+        query.$or = [
+            {tit: {$regex: searchText, $options: 'i'}},
+            {int: {$regex: searchText, $options: 'i'}}
+        ];
+    }
+
+    // 1. 獲取所有符合關鍵字條件的數據 (不立即分頁或排序)
+    const allMatchingItems = await concertModel.find(query);
+
+    // --- 排序邏輯 (與 getDateSearchData 類似) ---
+    // 2. 為每個篩選後的項目預先計算排序鍵 (最早的 pdt 日期)
+    const itemsWithSortKey = allMatchingItems.map(item => {
+        const plainItem = item.toObject ? item.toObject() : {...item};
+        return {
+            originalItem: plainItem,
+            sortKey: getEarliestPdtDate(plainItem.pdt) // 使用已有的輔助函數
+        };
+    });
+
+    // 3. 基於預計算的排序鍵進行排序 (升冪排序：活動日期從早到晚)
+    itemsWithSortKey.sort((itemA, itemB) => {
+        const earliestPdtA = itemA.sortKey;
+        const earliestPdtB = itemB.sortKey;
+
+        if (!earliestPdtA && !earliestPdtB) return 0;
+        if (!earliestPdtA) return 1;  // A 無日期，排在後面
+        if (!earliestPdtB) return -1; // B 無日期，排在後面 (即 A 在前)
+
+        return earliestPdtA.getTime() - earliestPdtB.getTime();
+    });
+
+    // 4. 從排序後的結果中提取原始項目
+    const sortedData = itemsWithSortKey.map(item => item.originalItem);
+    // --- 排序邏輯結束 ---
+
+    const totalItems = sortedData.length; // 總符合條件的項目數
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // 5. 對排序後的數據進行分頁
+    const paginatedData = sortedData.slice(skip, skip + limit);
+
+    res.status(200).json({
+        data: paginatedData,
+        page,
+        totalPages,
+        nbHits: totalItems // 返回符合篩選和排序後的總項目數
+    });
+});
+
+const getCitySelectionData = asyncWrapper(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 30;
+    const skip = (page - 1) * limit; // 計算 skip 值
+
+    const {cit} = req.query;
+    const queryObject = {};
+    if (cit) {
+        queryObject.cit = cit;
+    }
+
+    // 1. 獲取所有符合城市條件的數據 (不立即分頁或排序)
+    const allMatchingItems = await concertModel.find(queryObject);
+
+    // --- 排序邏輯 (與 getDateSearchData 和 getKeywordSearchData 類似) ---
+    // 2. 為每個篩選後的項目預先計算排序鍵 (最早的 pdt 日期)
+    const itemsWithSortKey = allMatchingItems.map(item => {
+        const plainItem = item.toObject ? item.toObject() : {...item};
+        return {
+            originalItem: plainItem,
+            sortKey: getEarliestPdtDate(plainItem.pdt) // 使用已有的輔助函數
+        };
+    });
+
+    // 3. 基於預計算的排序鍵進行排序 (升冪排序：活動日期從早到晚)
+    itemsWithSortKey.sort((itemA, itemB) => {
+        const earliestPdtA = itemA.sortKey;
+        const earliestPdtB = itemB.sortKey;
+
+        if (!earliestPdtA && !earliestPdtB) return 0;
+        if (!earliestPdtA) return 1;  // A 無日期，排在後面
+        if (!earliestPdtB) return -1; // B 無日期，排在後面 (即 A 在前)
+
+        return earliestPdtA.getTime() - earliestPdtB.getTime();
+    });
+
+    // 4. 從排序後的結果中提取原始項目
+    const sortedData = itemsWithSortKey.map(item => item.originalItem);
+    // --- 排序邏輯結束 ---
+
+    const totalItems = sortedData.length; // 總符合條件的項目數
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // 5. 對排序後的數據進行分頁
+    const paginatedData = sortedData.slice(skip, skip + limit);
+
+    res.status(200).json({
+        data: paginatedData,
+        page,
+        totalPages,
+        nbHits: totalItems // 返回符合篩選和排序後的總項目數
+    });
+});
+
+
 const getDateSearchData = asyncWrapper(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 30;
     const skip = (page - 1) * limit;
 
-    const { start_date, end_date } = req.query;
+    const {start_date, end_date} = req.query;
 
     let startDateObj = null;
     if (start_date) {
@@ -157,7 +222,7 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
             startDateObj.setHours(0, 0, 0, 0); // 確保是當天的開始
         } else {
             // parseQueryDateParam 內部已有 console.warn
-            return res.status(400).json({ message: "無效的 start_date 格式。請使用 YYYYMMDD。" });
+            return res.status(400).json({message: "無效的 start_date 格式。請使用 YYYYMMDD。"});
         }
     }
 
@@ -168,12 +233,12 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
             endDateObj.setHours(23, 59, 59, 999); // 確保是當天的結束
         } else {
             // parseQueryDateParam 內部已有 console.warn
-            return res.status(400).json({ message: "無效的 end_date 格式。請使用 YYYYMMDD。" });
+            return res.status(400).json({message: "無效的 end_date 格式。請使用 YYYYMMDD。"});
         }
     }
 
     if (startDateObj && endDateObj && startDateObj > endDateObj) {
-        return res.status(400).json({ message: "start_date 不能晚於 end_date。" });
+        return res.status(400).json({message: "start_date 不能晚於 end_date。"});
     }
 
     // 處理沒有日期參數的情況
@@ -217,26 +282,12 @@ const getDateSearchData = asyncWrapper(async (req, res) => {
         });
     });
 
-    // --- 排序邏輯 ---
-    // 輔助函數：從 pdt 陣列中獲取最早的有效日期
-    const getEarliestPdtDate = (pdtArray) => {
-        if (!pdtArray || pdtArray.length === 0) return null;
-        const validDates = pdtArray
-            .map(pdtStr => parsePdtDateString(pdtStr)) // 將字串轉換為 Date 物件
-            .filter(date => date !== null);            // 過濾掉無效日期
-
-        if (validDates.length === 0) return null;
-
-        // 按時間升冪排序並取第一個
-        return validDates.sort((d1, d2) => d1.getTime() - d2.getTime())[0];
-    };
-
     // 1. 為每個篩選後的項目預先計算排序鍵 (最早的 pdt 日期)
     const itemsWithSortKey = filteredByDate.map(item => {
         // 如果 item 是 Mongoose 文檔，使用 toObject() 獲取純 JS 物件以附加屬性
         // 否則直接使用 item (假設它已經是普通物件)
         // 為了安全，可以複製一份，避免修改原始從 DB 獲取的物件 (雖然這裡只是讀取)
-        const plainItem = item.toObject ? item.toObject() : { ...item };
+        const plainItem = item.toObject ? item.toObject() : {...item};
         return {
             originalItem: plainItem,
             sortKey: getEarliestPdtDate(plainItem.pdt)
